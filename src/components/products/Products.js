@@ -1,8 +1,14 @@
 import { CartContext } from '@/context/CartContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
+import Button from '@/components/globalComponents/Button';
+import { CloseSvg } from '@/components/globalComponents/CloseSvg';
+import Img from '@/components/globalComponents/Img';
+import Input from '@/components/globalComponents/Input';
+import { HiOutlineFunnel, HiOutlineMagnifyingGlass } from 'react-icons/hi2';
 
 export default function Products() {
   const { addProduct } = useContext(CartContext);
+  const [searchValue, setSearchValue] = useState("");
 
   const products = [
     {
@@ -29,18 +35,56 @@ export default function Products() {
   return (
     <section id="products" className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Our Featured Products</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Quality equipment for your home workouts at affordable prices
+        <div className="text-center mb-15 mt-5">
+          <h2 className="text-5xl font-bold text-gray-800 mb-2">Nos Produits Exclusifs</h2>
+          <p className="mt-5 font-light text-xl text-gray-600 mx-auto">
+          Plus d’excuses, le sport s’invite chez vous. Commandez dès maintenant.
           </p>
         </div>
+
+        <div className="mb-25 flex items-end justify-center gap-6">
+          <Button className="px-5 py-4 rounded-lg bg-black text-white cursor-pointer">
+            Tous les produits
+          </Button>
+
+        <div className='w-[60%]'>
+          <Input
+              name="SearchBar"
+              placeholder={`Chercher...`}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              suffix={
+                searchValue.length > 0 ? (
+                  <CloseSvg
+                    onClick={() => setSearchValue("")}
+                    height={24}
+                    width={24}
+                    fillColor="#000000ff"
+                  />
+                ) : (
+                  <HiOutlineMagnifyingGlass/>
+                )
+              }
+              className="h-[54px] justify-center rounded-lg border border-solid border-gray-300 text-[21px]"
+            />
+        </div>
+
+          <Button
+            leftIcon={
+              <HiOutlineFunnel/>
+            }
+            className="flex h-[50px] min-w-[114px] flex-row items-center justify-center gap-0.5 rounded-lg bg-gray-100 px-5 text-center font-inter text-[18px] font-medium text-black_900"
+          >
+            Filtres
+          </Button>
+        </div>
+
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {products.map((product) => (
             <div key={product.id} className="bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg">
               <div className="relative overflow-hidden">
-                <img
+                <Img
                   src={product.image}
                   alt={product.name}
                   className="w-full h-64 object-cover"

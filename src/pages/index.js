@@ -1,30 +1,21 @@
-import Header from '@/components/header/Header';
-import Hero from '@/components/globalComponents/Hero';
+import HomeTopSection from '@/components/home/HomeTopSection';
 import Products from '@/components/products/Products';
 import About from '@/components/globalComponents/About';
 import PaymentMethods from '@/components/payment/PaymentMethods';
 import Testimonials from '@/components/globalComponents/Testimonials';
-import Contact from '@/components/globalComponents/Contact';
-import Footer from '@/components/footer/Footer';
-import WhatsAppFloat from '@/components/globalComponents/WhatsAppFloat';
 import { mongooseConnect } from '@/lib/mongoose';
 import { Product } from '@/models/Product';
+import MainLayout from '@/layouts/MainLayout';
 
 export default function Home() {
   return (
-    <div className="bg-gray-50">
-      <Header />
-      <main>
-        <Hero />
-        <Products />
-        <About />
-        <PaymentMethods />
-        <Testimonials />
-        <Contact />
-      </main>
-      <Footer />
-      <WhatsAppFloat />
-    </div>
+      <MainLayout className='relative top-0'>
+          <HomeTopSection />
+          <Products />
+          <About />
+          <PaymentMethods />
+          <Testimonials />
+      </MainLayout>
   );
 }
 

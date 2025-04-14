@@ -1,44 +1,109 @@
 import { useContext, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaShoppingCart, FaBars } from 'react-icons/fa';
+import { HiOutlineUserCircle, HiOutlineMagnifyingGlass, HiOutlineShoppingCart, HiBars3} from 'react-icons/hi2'
 import { CartContext } from '@/context/CartContext';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartProducts } = useContext(CartContext);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    console.log('Recherche pour :', searchQuery);
+    // Ici, implémente la navigation vers la page de résultats de recherche
+  };
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href="/" className="flex items-center space-x-2">
-          <Image src="/logo.svg" alt="Logo" width={150} height={150}/>\
+    <header className="absolute top-0 bg-transparent w-full md:py-3 z-50"> {/* Fond noir et bords arrondis */}
+      <div className="lg:px-25 md:px-5 flex justify-between items-center">
+        {/* Logo à gauche */}
+        <Link href="/" className="flex items-center">
+          <Image src="/logo/logo.svg" alt="Workout Shop Logo" width={120} height={40} />
         </Link>
-        
-        <nav className={`${mobileMenuOpen ? 'block' : 'hidden'} md:flex md:space-x-8 fixed md:static inset-0 md:inset-auto bg-white md:bg-transparent pt-16 md:pt-0 px-4 md:px-0`}>
-          <Link href="#home" className="block md:inline text-gray-800 hover:text-blue-500 font-medium py-2 md:py-0">Home</Link>
-          <Link href="#products" className="block md:inline text-gray-800 hover:text-blue-500 font-medium py-2 md:py-0">Products</Link>
-          <Link href="#about" className="block md:inline text-gray-800 hover:text-blue-500 font-medium py-2 md:py-0">About Us</Link>
-          <Link href="#contact" className="block md:inline text-gray-800 hover:text-blue-500 font-medium py-2 md:py-0">Contact</Link>
-        </nav>
-        
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <FaShoppingCart className="text-gray-700 text-xl cursor-pointer" />
+
+        <div className='bg-gray-900 rounded-[30px] lg:w-3/4 md:w-fit flex justify-between py-2 px-6 gap-12'>
+          {/* Liens de navigation */}
+          <div className="flex items-center space-x-6">
+            <nav className="hidden lg:flex space-x-8">
+              <Link href="/products" className="text-white font-normal hover:text-gray-300 cursor-pointer">Nos Produits</Link> 
+              <Link href="/about" className="text-white font-light hover:text-gray-300 cursor-pointer">A propos de nous</Link> 
+              <Link href="/contact" className="text-white font-light hover:text-gray-300 cursor-pointer">Nous contacter</Link> 
+            </nav>
+          </div>
+
+          {/* Barre de recherche Icônes de compte et panier */}
+          <div className="flex items-center space-x-4">
+            {/* Barre de recherche */}
+            <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center px-1 py-1 gap-3"> {/* Fond gris clair */}
+              <input
+                type="text"
+                placeholder="Chercher..."
+                className="bg-[rgba(209,213,219,0.25)] rounded-[20px] outline-none w-32 sm:w-48 text-white px-3"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+              <button type="submit" className="text-white hover:text-gray-300"> {/* Icône de loupe blanche */}
+                <HiOutlineMagnifyingGlass className="text-[24px]" />
+              </button>
+            </form>
+            <Link href="/account" className="hidden text-white md:block hover:text-gray-300"> {/* Icône blanche */}
+              <HiOutlineUserCircle className="text-[24px]"/>
+            </Link>
+            <Link href="/cart" className="relative text-white hover:text-gray-300"> {/* Icône blanche */}
+              <HiOutlineShoppingCart className="text-[24px]" />
+              {cartProducts.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  {cartProducts.length}
+                </span>
+              )}
+            </Link>
+
+            {/* Menu mobile */}
+            <button
+              className="md:hidden text-white focus:outline-none"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <HiBars3 className="text-xl" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Menu mobile déroulant */}
+      {mobileMenuOpen && (
+        <div className="bg-gray-800 py-2 px-4 md:hidden"> {/* Fond plus foncé pour le menu mobile */}
+          <Link href="/products" className="block py-2 text-white hover:text-gray-300">Nos Produits</Link>
+          <Link href="/about" className="block py-2 text-white hover:text-gray-300">A propos de nous</Link>
+          <Link href="/contact" className="block py-2 text-white hover:text-gray-300">Nous contacter</Link>
+          <Link href="/account" className="block py-2 text-white hover:text-gray-300">Mon Compte</Link>
+          <Link href="/cart" className="block py-2 text-white hover:text-gray-300 relative">
+            Panier
             {cartProducts.length > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                 {cartProducts.length}
               </span>
             )}
-          </div>
-          <button 
-            className="md:hidden text-gray-700"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <FaBars className="text-xl" />
-          </button>
+          </Link>
+          <form onSubmit={handleSearchSubmit} className="mt-2 flex items-center bg-gray-300 rounded-md px-2 py-1">
+            <input
+              type="text"
+              placeholder="Chercher..."
+              className="outline-none w-full text-gray-600 bg-transparent"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            <button type="submit" className="text-white hover:text-gray-300">
+              <HiOutlineMagnifyingGlass className="text-lg" />
+            </button>
+          </form>
         </div>
-      </div>
+      )}
     </header>
   );
 }

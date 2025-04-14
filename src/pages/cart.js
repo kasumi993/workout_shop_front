@@ -116,7 +116,7 @@ export default function CartPage() {
                           {/* Button implementation directly */}
                           <button 
                             onClick={() => lessOfThisProduct(product._id)}
-                            className="border-0 py-1 px-3 rounded cursor-pointer inline-flex items-center no-underline font-medium font-poppins bg-black text-white"
+                            className="border-0 py-1 px-3 rounded cursor-pointer inline-flex items-center no-underline font-medium font-roboto bg-black text-white"
                           >
                             -
                           </button>
@@ -125,7 +125,7 @@ export default function CartPage() {
                           </span>
                           <button 
                             onClick={() => moreOfThisProduct(product._id)}
-                            className="border-0 py-1 px-3 rounded cursor-pointer inline-flex items-center no-underline font-medium font-poppins bg-black text-white"
+                            className="border-0 py-1 px-3 rounded cursor-pointer inline-flex items-center no-underline font-medium font-roboto bg-black text-white"
                           >
                             +
                           </button>
@@ -202,7 +202,7 @@ export default function CartPage() {
               {/* Button implementation directly with black and block properties */}
               <button 
                 onClick={goToPayment}
-                className="w-full border-0 py-1 px-3 rounded cursor-pointer flex items-center justify-center no-underline font-medium font-poppins bg-black text-white mt-4"
+                className="w-full border-0 py-1 px-3 rounded cursor-pointer flex items-center justify-center no-underline font-medium font-roboto bg-black text-white mt-4"
               >
                 Continue to payment
               </button>

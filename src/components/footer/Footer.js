@@ -1,4 +1,4 @@
-import { FaDumbbell, FaFacebookF, FaInstagram, FaTwitter, FaCcVisa, FaCcMastercard } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -6,76 +6,60 @@ export default function Footer() {
   return (
     <footer className="bg-gray-800 text-white py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-18">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <FaDumbbell className="text-blue-400 text-2xl" />
-              <h3 className="text-xl font-bold">WORKOUT<span className="text-blue-400">-SHOP</span></h3>
+              <Image src="/logo/logo-blue-white.svg" alt="Logo" width={180} height={129} className="object-contain" />
             </div>
             <p className="text-gray-400 mb-4">
-              Your trusted source for quality home workout equipment in Senegal.
+              Votre premier fournisseur de matériel de sport au Senegal.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white text-xl">
+          </div>
+          
+          <div>
+            <h4 className="text-lg font-semibold mb-4 text-center">Nous contacter</h4>
+            <div className='cursor-pointer flex flex-col items-center justify-center space-x-2 mb-2'>
+              <div className='flex gap-2'>
+                <Image src={'/icones/whatsapp.svg'} width={20} height={20} alt='image' className='object-contain' />
+                <span className='text-gray-400 hover:text-white transition duration-300'> +221 76 197 80 60 </span>
+              </div>
+              <Link href="https://api.whatsapp.com/send?phone=221761978060" target="_blank" className='mt-5 rounded-[10px] bg-[#1EBD4B] px-5 py-3 text-[15px] text-white'>
+                Envoyer un message
+              </Link>
+            </div>
+            <div className="mt-5 flex space-x-4 justify-center">
+              <a href="https://www.facebook.com/people/Workout-shop/100064445059229/" target="_blank" className="text-gray-400 hover:text-white text-xl">
                 <FaFacebookF />
               </a>
               <a href="#" className="text-gray-400 hover:text-white text-xl">
                 <FaInstagram />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white text-xl">
-                <FaTwitter />
-              </a>
             </div>
           </div>
           
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li><Link href="#home" className="text-gray-400 hover:text-white transition duration-300">Home</Link></li>
-              <li><Link href="#products" className="text-gray-400 hover:text-white transition duration-300">Products</Link></li>
-              <li><Link href="#about" className="text-gray-400 hover:text-white transition duration-300">About Us</Link></li>
-              <li><Link href="#contact" className="text-gray-400 hover:text-white transition duration-300">Contact</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Customer Service</h4>
-            <ul className="space-y-2">
-              <li><Link href="#" className="text-gray-400 hover:text-white transition duration-300">Shipping Policy</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-white transition duration-300">Return Policy</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-white transition duration-300">FAQ</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-white transition duration-300">Privacy Policy</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Payment Methods</h4>
+            <h4 className="text-lg font-semibold mb-4">Méthodes de paiement</h4>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 p-3 rounded flex items-center justify-center">
-                <FaCcVisa className="text-2xl text-gray-300" />
-              </div>
-              <div className="bg-gray-700 p-3 rounded flex items-center justify-center">
-                <FaCcMastercard className="text-2xl text-gray-300" />
-              </div>
-              <div className="bg-gray-700 p-3 rounded flex items-center justify-center">
                 <Image 
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Orange_Money_logo.svg/1200px-Orange_Money_logo.svg.png" 
+                  src="/images/om.svg" 
                   alt="Orange Money" 
-                  width={60}
-                  height={24}
-                  className="h-6"
+                  width={80}
+                  height={54}
                 />
               </div>
               <div className="bg-gray-700 p-3 rounded flex items-center justify-center">
                 <Image 
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Wave_logo.png/640px-Wave_logo.png" 
+                  src="/images/wave.svg" 
                   alt="Wave" 
-                  width={60}
-                  height={24}
-                  className="h-6"
+                  width={80}
+                  height={54}
                 />
               </div>
             </div>
+            <p className="mt-5 text-gray-400 mb-4">
+              Livraison à domicile partout dans dakar.
+            </p>
           </div>
         </div>
         

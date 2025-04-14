@@ -1,8 +1,8 @@
 import Header from "@/components/header/Header";
 import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/Product";
-import ProductImages from "@/components/Products/ProductImages";
-import Button from "@/components/GlobalComponents/Button";
+import ProductImages from "@/components/products/ProductImages";
+import Button from "@/components/globalComponents/Button";
 import CartIcon from "@/components/Icons/CartIcon";
 import {useContext} from "react";
 import {CartContext} from "@/context/CartContext";
@@ -39,13 +39,14 @@ export default function ProductPage({product}) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   await mongooseConnect();
   const {id} = context.query;
   const product = await Product.findById(id);
   return {
     props: {
       product: JSON.parse(JSON.stringify(product)),
-    }
+    },
+    revalidate: 60,
   }
 }

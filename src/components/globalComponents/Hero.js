@@ -1,38 +1,62 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import Button from '@/components/globalComponents/Button';
+import { HiOutlineShoppingCart } from 'react-icons/hi2'
 
 export default function Hero() {
   return (
-    <section id="home" className="bg-gradient-to-r from-blue-500 to-emerald-500 text-white py-16 md:py-24">
-      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
-        <div className="md:w-1/2 mb-10 md:mb-0">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">Build Your Dream Home Gym</h2>
-          <p className="text-lg mb-6">Quality workout equipment delivered to your door in Senegal. Start your fitness journey today!</p>
-          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-            <Link 
-              href="#products" 
-              className="bg-white text-blue-600 font-bold py-3 px-6 rounded-lg text-center hover:bg-gray-100 transition duration-300"
-            >
-              Shop Now
-            </Link>
-            <Link 
-              href="#about" 
-              className="border-2 border-white text-white font-bold py-3 px-6 rounded-lg text-center hover:bg-white hover:bg-opacity-10 transition duration-300"
-            >
-              Learn More
-            </Link>
+    <section id="home" className="relative bg-gradient-to-r from-[#BDCDE5] to-[#DCEEFE] h-screen max-h-[600px] md:max-h-[800px]">
+    <div className="absolute bg-[url('/images/hero-background-shape.svg')] opacity-60 bg-contain bg-no-repeat bg-top h-3/4 w-3/4 left-0 right-0 top-0 mx-auto animate-slide-down"></div>
+      <Image src={'/images/velo3.png'} 
+              width={652} 
+              height={572} 
+              alt="image Velo spinning" 
+              className="absolute bottom-0 left-20 top-20 right-0 m-auto scale-x-[-1]" />
+      <div className="relative flex justify-between items-center h-full w-full px-25">
+        <div className="flex w-[50%] items-start md:flex-col">
+          <div className="mt-[38px] flex flex-1 flex-col items-start self-end md:self-stretch">
+            <h1 className="mt-10 leading-tight text-black font-robotocondensed text-[70px] font-bold md:w-full">
+              Le sport vient <br/> chez vous avec <br/> Workout Shop
+            </h1>
+            <p className="mt-5 text-black font-robotocondensed text-4xl font-light md:text-[23px] sm:text-[21px]">
+              Livraison partout à dakar 🇸🇳
+            </p>
+            <div className="mt-5 flex gap-5 flex-col items-center">
+              <div className='flex flex-row gap-5'>
+                <div className="w-[139px] h-[75px] flex justify-center items-center p-3 bg-[rgba(0,0,0,0.1)] rounded-lg">
+                  <Image src={'/images/om.svg'} width={70} height={48} alt='image' className='object-contain' />
+                </div>
+                <div className="w-[139px] h-[75px] flex justify-center items-center p-3 bg-[rgba(0,0,0,0.1)] rounded-lg">
+                  <Image src={'/images/wave.svg'} width={70} height={48} alt='image' className='object-contain' />
+                </div>
+              </div>
+              <div className="w-[200px] h-[75px] gap-3 flex justify-center items-center p-3 bg-[rgba(0,0,0,0.1)] rounded-lg">
+                  <Image src={'/icones/whatsapp.svg'} width={30} height={30} alt='image' className='object-contain' />
+                  <span className='text-gray-800'> +221 76 197 80 60 </span>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="md:w-1/2 flex justify-center">
-          <Image 
-            src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
-            alt="Home gym equipment" 
-            width={600}
-            height={400}
-            className="rounded-lg shadow-2xl max-w-full h-auto max-h-96 object-cover"
-            priority
-          />
-        </div>
+        <div className="relative top-[-50px] flex w-[230px] flex-col items-center px-8 sm:px-5">
+            <div className="w-full relative flex rounded-tl-[90px] rounded-tr-[90px] border border-solid border-black px-6 py-8 sm:p-5">
+              <h2 className="text-black mt-[46px] text-center !font-robotocondensed text-[25px] font-bold">
+                En Exclusivité
+              </h2>
+            </div>
+
+            <div className="w-full flex flex-col justify-center items-center gap-0.5 border border-solid border-black p-2">
+              <p className="text-black self-center font-robotocondensed text-[25px] font-light">
+                Vélo d'intérieur
+              </p>
+              <h3 className="text-black font-robotocondensed text-[25px] font-bold">
+                150.000 cfa
+              </h3>
+            </div>
+
+            <Button leftIcon={<HiOutlineShoppingCart className="text-[24px]"/>}
+              className="mt-[34px] flex items-center justify-center gap-1.5 rounded-[10px] bg-black p-3.5 text-[15px] text-white">
+                Ajouter au Panier
+            </Button>
+          </div>
       </div>
     </section>
   );

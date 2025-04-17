@@ -7,11 +7,11 @@ import { mongooseConnect } from '@/lib/mongoose';
 import { Product } from '@/models/Product';
 import MainLayout from '@/layouts/MainLayout';
 
-export default function Home() {
+export default function Home({ featuredProduct, newProducts }) {
   return (
       <MainLayout className='relative top-0'>
           <HomeTopSection />
-          <Products />
+          <Products products={newProducts} />
           <About />
           <PaymentMethods />
           <Testimonials />

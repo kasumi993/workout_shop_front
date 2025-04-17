@@ -6,31 +6,9 @@ import Img from '@/components/globalComponents/Img';
 import Input from '@/components/globalComponents/Input';
 import { HiOutlineFunnel, HiOutlineMagnifyingGlass } from 'react-icons/hi2';
 
-export default function Products() {
+export default function Products({ products }) {
   const { addProduct } = useContext(CartContext);
   const [searchValue, setSearchValue] = useState("");
-
-  const products = [
-    {
-      id: 1,
-      name: "Adjustable Dumbbells",
-      description: "5-25kg adjustable weights in one compact set",
-      price: "45,000",
-      image: "/images/adjustable-dumbbells.jpg",
-      badge: {
-        text: "NEW",
-        color: "bg-blue-500"
-      }
-    },
-    {
-      id: 2,
-      name: "Premium Yoga Mat",
-      description: "Non-slip, extra thick for maximum comfort",
-      price: "15,000",
-      image: "/images/yoga-mat.jpg"
-    },
-    // Add more products...
-  ];
 
   return (
     <section id="products" className="py-16 bg-white">

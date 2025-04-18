@@ -9,6 +9,13 @@ const ProductSchema = new Schema({
   properties: {type:Object},
 }, {
   timestamps: true,
+  toJSON: {
+    transform: function (doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+    }
+  }
 });
 
 export const Product = models.Product || model('Product', ProductSchema);

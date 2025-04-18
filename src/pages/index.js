@@ -1,7 +1,7 @@
 import HomeTopSection from '@/components/home/HomeTopSection';
-import Products from '@/components/products/Products';
-import About from '@/components/globalComponents/About';
-import PaymentMethods from '@/components/payment/PaymentMethods';
+import ProductsSection from '@/components/products/ProductsSection';
+import AboutSection from '@/components/globalComponents/AboutSection';
+import PaymentMethodsSection from '@/components/payment/PaymentMethodsSection';
 import Testimonials from '@/components/globalComponents/Testimonials';
 import { mongooseConnect } from '@/lib/mongoose';
 import { Product } from '@/models/Product';
@@ -11,9 +11,9 @@ export default function Home({ featuredProduct, newProducts }) {
   return (
       <MainLayout className='relative top-0'>
           <HomeTopSection />
-          <Products products={newProducts} />
-          <About />
-          <PaymentMethods />
+          <ProductsSection products={newProducts} />
+          <AboutSection />
+          <PaymentMethodsSection />
           <Testimonials />
       </MainLayout>
   );

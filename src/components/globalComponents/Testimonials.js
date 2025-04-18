@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import Avatar from './Avatar';
 
 
 export default function Testimonials() {
@@ -17,15 +18,21 @@ export default function Testimonials() {
             rating: 4.5,
             comment: "Great customer service! When I had an issue with my order, the brothers responded quickly on WhatsApp and resolved it immediately. Will definitely shop here again."
         },
+        {
+          name: "Ibrahima S.",
+          image: "/images/ibrahima.jpg",
+          rating: 4.5,
+          comment: "Great customer service! When I had an issue with my order, the brothers responded quickly on WhatsApp and resolved it immediately. Will definitely shop here again."
+      },
         // Add more testimonials...
         ];
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="pt-16 pb-28 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">What Our Customers Say</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">Hear from people who transformed their home workouts</p>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Ce que disent nos client</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">Les premiers clients qui nous ont fait confiance.</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -33,13 +40,7 @@ export default function Testimonials() {
             <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden mr-4">
-                  <Image 
-                    src={testimonial.image} 
-                    alt={testimonial.name} 
-                    width={48}
-                    height={48}
-                    className="w-full h-full object-cover"
-                  />
+                  <Avatar name={testimonial.name} />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>

@@ -20,7 +20,7 @@ export default function Header() {
   };
 
   return (
-    <header className="absolute top-0 bg-transparent w-full md:py-3 z-50"> {/* Fond noir et bords arrondis */}
+    <header className="relative top-0 bg-transparent w-full md:py-3 z-50"> {/* Fond noir et bords arrondis */}
       <div className="lg:px-25 md:px-5 flex justify-between items-center">
         {/* Logo à gauche */}
         <Link href="/" className="flex items-center">

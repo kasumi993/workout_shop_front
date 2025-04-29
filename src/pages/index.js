@@ -9,7 +9,7 @@ import MainLayout from '@/layouts/MainLayout';
 
 export default function Home({ featuredProduct, newProducts }) {
   return (
-      <MainLayout className='relative top-0'>
+      <MainLayout headerFixed={true}>
           <HomeTopSection />
           <ProductsSection products={newProducts} />
           <AboutSection />

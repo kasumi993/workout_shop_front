@@ -7,6 +7,7 @@ import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/Product";
 import MainLayout from '@/layouts/MainLayout';
 import Avatar from "@/components/globalComponents/Avatar";
+import RelatedProducts from "@/components/products/RelatedProducts";
 
 function ProductPage({product}) {
   const {addProduct} = useContext(CartContext);
@@ -144,77 +145,7 @@ function ProductPage({product}) {
           </div>
 
           {/* Section "Autres Produits" */}
-          <div className="py-8 bg-gray-100 mt-12">
-            <div className="container mx-auto px-4">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Autres Produits</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                {/* Produit 1 */}
-                <div className="bg-white rounded-md shadow-md overflow-hidden">
-                  <div className="relative w-full h-40 overflow-hidden">
-                    <Image src="/images/placeholder.png" width={300} height={200} alt="Autre produit" className="object-cover" />
-                    <button className="absolute top-2 right-2 bg-white rounded-full p-1 text-gray-500 hover:text-red-500">
-                      <FaHeart />
-                    </button>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1">Kit haltère neuf 50Kg</h3>
-                    <p className="text-gray-600 text-xs mb-2">95000 fr</p>
-                    <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded-md text-xs">
-                      Ajouter au panier
-                    </button>
-                  </div>
-                </div>
-                {/* Produit 2 */}
-                <div className="bg-white rounded-md shadow-md overflow-hidden">
-                  <div className="relative w-full h-40 overflow-hidden">
-                    <Image src="/images/placeholder.png" width={300} height={200} alt="Autre produit" className="object-cover" />
-                    <button className="absolute top-2 right-2 bg-white rounded-full p-1 text-gray-500 hover:text-red-500">
-                      <FaHeart />
-                    </button>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1">Kit haltère neuf 50Kg</h3>
-                    <p className="text-gray-600 text-xs mb-2">95000 fr</p>
-                    <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded-md text-xs">
-                      Ajouter au panier
-                    </button>
-                  </div>
-                </div>
-                {/* Produit 3 */}
-                <div className="bg-white rounded-md shadow-md overflow-hidden">
-                  <div className="relative w-full h-40 overflow-hidden">
-                    <Image src="/images/placeholder.png" width={300} height={200} alt="Autre produit" className="object-cover" />
-                    <button className="absolute top-2 right-2 bg-white rounded-full p-1 text-gray-500 hover:text-red-500">
-                      <FaHeart />
-                    </button>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1">Kit haltère neuf 50Kg</h3>
-                    <p className="text-gray-600 text-xs mb-2">95000 fr</p>
-                    <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded-md text-xs">
-                      Ajouter au panier
-                    </button>
-                  </div>
-                </div>
-                {/* Produit 4 */}
-                <div className="bg-white rounded-md shadow-md overflow-hidden">
-                  <div className="relative w-full h-40 overflow-hidden">
-                    <Image src="/images/placeholder.png" width={300} height={200} alt="Autre produit" className="object-cover" />
-                    <button className="absolute top-2 right-2 bg-white rounded-full p-1 text-gray-500 hover:text-red-500">
-                      <FaHeart />
-                    </button>
-                  </div>
-                  <div className="p-4">
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Kit haltère neuf 50Kg</h3>
-                    <p className="text-gray-600 text-xs mb-2">95000 fr</p>
-                    <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded-md text-xs">
-                      <HiOutlineShoppingCart className="text-[24px]" /> Ajouter au panier
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <RelatedProducts product={product}/>
         </div>
       </div>
     </MainLayout>

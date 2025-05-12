@@ -25,7 +25,7 @@ const Img = ({
 
   return (
     <>
-      {isLoading && <Skeleton width={width} height={height} />}
+      {isLoading && <Skeleton className={className} />}
       <Image
         className={`${className} ${isLoading ? 'hidden' : ''}`}
         src={imgSrc}

@@ -1,11 +1,11 @@
-import { CartContext } from '@/context/CartContext';
-import { useContext, useState} from 'react';
+
 import Img from "@/components/globalComponents/Img";
 import { HiOutlineHeart, HiHeart } from "react-icons/hi2";
 import Link from 'next/link';
+import { useState } from "react";
+import AddToCartBtn from "../buttons/addToCartBtn";
 
 export default function ProductCard({ product }) {
-    const { addProduct } = useContext(CartContext);
     const [ wishlist, setWishlist ] = useState([]);
     const [isHovered, setIsHovered] = useState(false);
 
@@ -49,15 +49,12 @@ export default function ProductCard({ product }) {
             <div className="p-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-1">{product.title}</h3>
             <p className="text-gray-600 text-sm mb-3">{product.description}</p>
-            <div className="flex justify-between items-center">
-                <span className="text-primary font-bold">{product.price} FCFA</span>
-                <button 
-                onClick={() => addProduct(product)}
-                className="bg-primary hover:bg-prmary text-white px-3 py-1 rounded text-sm transition duration-300"
-                >
-                Add to Cart
-                </button>
+            <div className="flex gap-2 items-center">
+                <span className="text-green-700 font-bold">{product.price} FCFA</span>
+                <span  className="text-sm text-gray-500 font-light" >( -25 %)</span>
+                <span className="text-sm text-gray-500 font-light line-through">{product.price} FCFA</span>
             </div>
+            <AddToCartBtn className="mt-6 py-2 px-2 text-[12px]" iconClass="!text-sm" />
             </div>
         </Link>
     )

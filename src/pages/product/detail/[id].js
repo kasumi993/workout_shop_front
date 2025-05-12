@@ -1,13 +1,15 @@
 import {useContext} from "react";
 import {CartContext} from "@/context/CartContext";
 import Image from 'next/image';
-import { FaArrowLeft, FaShareAlt, FaHeart, FaStar, FaTruck, FaShieldAlt } from 'react-icons/fa';
-import { HiOutlineShoppingCart } from "react-icons/hi2";
+import { FaStar, FaTruck, FaShieldAlt } from 'react-icons/fa';
+import { HiOutlineShoppingCart, HiArrowLeft, HiOutlineShare, HiOutlineHeart, HiClock, HiOutlineClock } from "react-icons/hi2";
 import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/Product";
 import MainLayout from '@/layouts/MainLayout';
 import Avatar from "@/components/globalComponents/Avatar";
 import RelatedProducts from "@/components/products/RelatedProducts";
+import ProductDetailTopNav from "@/components/navigation/ProductDetailTopNav";
+import ProductImages from "@/components/products/ProductImages";
 
 function ProductPage({product}) {
   const {addProduct} = useContext(CartContext);
@@ -39,52 +41,20 @@ function ProductPage({product}) {
 
   return (
     <MainLayout>
-      <div className="bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
+      <div className="mt-8">
+        <div className="container mx-auto">
           {/* Navigation secondaire */}
-          <div className="flex items-center justify-between mb-6">
-            <button className="flex items-center text-gray-600 hover:text-gray-800">
-              <FaArrowLeft className="mr-2" /> Retour
-            </button>
-            <div className="text-sm text-gray-500">Catégorie / Haltères / <span className="font-semibold">10kg</span></div>
-            <div className="flex items-center space-x-4">
-              <button className="text-gray-600 hover:text-gray-800 flex items-center">
-                <FaShareAlt className="mr-2" /> Partager
-              </button>
-              <button className="text-gray-600 hover:text-gray-800 flex items-center">
-                <FaHeart className="mr-2" /> Ajouter aux favoris
-              </button>
-            </div>
-          </div>
+          <ProductDetailTopNav />
 
           {/* Section principale du produit */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+          <div className="mt-18 flex gap-24">
             {/* Galerie d'images miniatures */}
-            <div className="hidden md:block flex flex-col space-y-2">
-              <div className="w-20 h-20 border rounded-md overflow-hidden">
-                <Image src="/images/placeholder.png" width={80} height={80} alt="Miniature haltère" className="object-cover" />
-              </div>
-              <div className="w-20 h-20 border rounded-md overflow-hidden">
-                <Image src="/images/placeholder.png" width={80} height={80} alt="Miniature haltère" className="object-cover" />
-              </div>
-              <div className="w-20 h-20 border rounded-md overflow-hidden">
-                <Image src="/images/placeholder.png" width={80} height={80} alt="Miniature haltère" className="object-cover" />
-              </div>
-              {/* ... plus de miniatures ... */}
-            </div>
-
-            {/* Image principale du produit */}
-            <div className="col-span-1 md:col-span-3 rounded-md overflow-hidden shadow-md">
-              <Image src="/images/placeholder.png" width={600} height={600} alt="Kit Haltères 10kg" className="object-contain" />
-            </div>
+            <ProductImages images={product.images} className={'w-[50%]'} />
 
             {/* Informations sur le produit */}
             <div className="col-span-1 md:col-span-1">
-              <h1 className="text-xl font-semibold text-gray-900 mb-2">{product.title}</h1>
-              <p className="text-gray-700 text-sm mb-4">{product.description}</p>
-              <div className="flex items-center mb-4">
-                <span className="text-xl font-bold text-gray-900 mr-2">{product.price}</span>
-                <div className="flex items-center text-yellow-500 text-sm">
+              <h1 className="text-5xl font-normal text-gray-900 mb-2">{product.title}</h1>
+              <div className="flex items-center text-yellow-500 text-sm">
                   <FaStar />
                   <FaStar />
                   <FaStar />
@@ -92,16 +62,21 @@ function ProductPage({product}) {
                   <FaStar className="text-gray-300" />
                   <span className="text-gray-500 ml-1">(4.0)</span>
                 </div>
+              <p className="text-gray-500 text-xl font-light mb-16 mt-8">{product.description}</p>
+              <div className="flex items-center mb-4">
+                <span className="text-2xl font-bold text-gray-900 mr-2">{product.price} Fr Cfa</span>
               </div>
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-md w-full mb-4" onClick={() => addProduct(product.id)}>
-                <HiOutlineShoppingCart className="text-[24px]"/> Ajouter au Panier
-              </button>
-              <div className="text-green-500 text-sm mb-2">Livré sous 1 ou 2 jours à Dakar</div>
-              <div className="flex items-center text-gray-600 text-sm mb-2">
-                <FaTruck className="mr-2" /> Livraison partout à Dakar 🇸🇳
+              <div className="flex mb-4 gap-3">
+                <button className="flex gap-3 bg-black hover:bg-primary text-white font-light py-2 px-5 rounded-md" onClick={() => addProduct(product.id)}>
+                  <HiOutlineShoppingCart className="text-[24px]"/> Ajouter au Panier
+                </button>
+                <div className="flex text-gray-700 text-sm mt-2">
+                  <HiOutlineClock className="mr-2 text-primary text-xl" /> Livré sous 1 ou 2 jours à Dakar 🇸🇳
+                  </div>
               </div>
-              <div className="flex items-center text-gray-600 text-sm">
-                <FaShieldAlt className="mr-2" /> Paiement sécurisé
+              
+              <div className="flex items-center text-gray-400 text-sm">
+                Veuillez nous contacter avant de passer commande si vous habitez hors de dakar.
               </div>
             </div>
           </div>

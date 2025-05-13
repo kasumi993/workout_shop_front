@@ -4,6 +4,28 @@
   --font-robotocondensed: "Roboto Condensed", "sans-serif"; 
   --font-roboto: "Roboto", "sans-serif"; 
   --color-primary: #1e71b8; /* blue */
+
+  --animate-fade-in: fade-in 1s ease-in-out;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  };
+
+  --animate-fade-out: fade-out 1s ease-in-out;
+
+  @keyframes fade-out {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
 }
 
 

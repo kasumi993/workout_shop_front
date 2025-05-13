@@ -47,9 +47,9 @@ function ProductPage({product}) {
           <ProductDetailTopNav />
 
           {/* Section principale du produit */}
-          <div className="mt-18 flex gap-24">
+          <div className="mt-18 flex gap-20">
             {/* Galerie d'images miniatures */}
-            <ProductImages images={product.images} className={'w-[50%]'} />
+            <ProductImages images={product.images} className={'w-[70%]'} />
 
             {/* Informations sur le produit */}
             <div className="col-span-1 md:col-span-1">

@@ -10,7 +10,7 @@ const MainLayout = ({ children, headerFixed, isScrolledPastSection }) => {
 
 
     return (
-        <div className="bg-gray-50">
+        <div>
             <div className={headerClasses}>
                 <Header />
             </div>

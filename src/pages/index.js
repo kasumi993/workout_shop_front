@@ -48,7 +48,7 @@ export default function Home({ featuredProduct, newProducts }) {
               <PaymentMethodsSection />
             </div>
           </SlideOnScroll>
-          <SlideOnScroll animationType="slide-right" start="top 90%">
+          <SlideOnScroll animationType="slide-top" start="top 140%">
             <div>
               <Testimonials />
             </div>

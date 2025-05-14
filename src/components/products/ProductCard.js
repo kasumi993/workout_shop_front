@@ -3,7 +3,7 @@ import Img from "@/components/globalComponents/Img";
 import { HiOutlineHeart, HiHeart } from "react-icons/hi2";
 import Link from 'next/link';
 import { useState } from "react";
-import AddToCartBtn from "../buttons/addToCartBtn";
+import AddToCartBtn from "../buttons/AddToCartBtn";
 
 export default function ProductCard({ product }) {
     const [ wishlist, setWishlist ] = useState([]);

@@ -20,7 +20,7 @@ const ProductImages = ({ images = [], className }) => {
                 {images && images.map((image, index) => (
                         <div 
                             key={index}
-                            className={`w-25 h-25 border rounded-md overflow-hidden cursor-pointer opacity-60 hover:opacity-100 ${
+                            className={`w-20 h-20 border rounded-md overflow-hidden cursor-pointer opacity-60 hover:opacity-100 ${
                                 selectedImage === index ? 'border-blue-500' : 'border-gray-200'
                             }`}
                             onClick={() => setSelectedImage(index)}
@@ -37,7 +37,7 @@ const ProductImages = ({ images = [], className }) => {
                 }
             </div>
              {/* Main image */}
-             <div className='flex items-center justify-center relative w-[90%] h-[500px] '>
+             <div className='flex items-center justify-center relative w-[95%] h-[500px] '>
                 <button
                     onClick={handlePreviousImage}
                     className="absolute left-[-20px] bg-white rounded-full p-4 text-gray-800 hover:bg-gray-200 shadow-md cursor-pointer"

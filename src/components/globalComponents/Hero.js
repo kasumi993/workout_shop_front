@@ -11,7 +11,7 @@ export default function Hero() {
   const productInfoRef = useRef(null);
 
   return (
-    <section id="hero" className="relative bg-gradient-to-r from-[#BDCDE5] to-[#DCEEFE] h-screen max-h-[600px] md:max-h-[800px]">
+    <section id="hero" className="relative bg-gradient-to-r from-[#FFFFFF] to-[#DCEEFE] h-screen max-h-[600px] md:max-h-[800px]">
       <SlideOnScroll ref={heroShapeRef} animationType="slide-bottom" endOpacity={0.4}>
         <div ref={heroShapeRef} className="absolute transition-opacity bg-[url('/images/hero-background-shape.svg')] opacity-60 bg-contain bg-no-repeat bg-top h-3/4 w-3/4 left-0 right-0 top-0 mx-auto animate-slide-down"></div>
       </SlideOnScroll>

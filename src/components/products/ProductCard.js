@@ -48,7 +48,7 @@ export default function ProductCard({ product }) {
             </div>
             <div className="p-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-1">{product.title}</h3>
-            <p className="text-gray-600 text-sm mb-3">{product.description}</p>
+            <p className="text-gray-600 text-sm mb-3 overflow-hidden whitespace-nowrap text-ellipsis">{product.description}</p>
             <div className="flex gap-2 items-center">
                 <span className="text-green-700 font-bold">{product.price} FCFA</span>
                 <span  className="text-sm text-gray-500 font-light" >( -25 %)</span>

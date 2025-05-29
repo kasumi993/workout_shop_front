@@ -4,22 +4,37 @@ export const CartContext = createContext({});
 
 export function CartContextProvider({children}) {
   const ls = typeof window !== "undefined" ? window.localStorage : null;
-  const [cartProducts,setCartProducts] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   useEffect(() => {
-    if (cartProducts?.length > 0) {
-      ls?.setItem('cart', JSON.stringify(cartProducts));
+    if (cartItems?.length > 0) {
+      ls?.setItem('cart', JSON.stringify(cartItems));
     }
-  }, [cartProducts, ls]);
+  }, [cartItems, ls]);
   useEffect(() => {
     if (ls && ls.getItem('cart')) {
-      setCartProducts(JSON.parse(ls.getItem('cart')));
+      setCartItems(JSON.parse(ls.getItem('cart')));
     }
   }, []);
-  function addProduct(productId) {
-    setCartProducts(prev => [...prev,productId]);
+  function addProduct(productId, delta = 1) {
+    setCartItems(prev => {
+      const itemExists = prev.some(item => item.id === productId);
+
+      if (itemExists) {
+        return prev
+          .map(item =>
+            item.id === productId
+              ? { ...item, quantity: Math.max(0, item.quantity + delta) }
+              : item
+          )
+          .filter(item => item.quantity > 0);
+      } else {
+        return [...prev, { id: productId, quantity: Math.max(0, delta) }];
+      }
+    });
   }
+
   function removeProduct(productId) {
-    setCartProducts(prev => {
+    setCartItems(prev => {
       const pos = prev.indexOf(productId);
       if (pos !== -1) {
         return prev.filter((value,index) => index !== pos);
@@ -28,10 +43,11 @@ export function CartContextProvider({children}) {
     });
   }
   function clearCart() {
-    setCartProducts([]);
+    setCartItems([]);
   }
+  
   return (
-    <CartContext.Provider value={{cartProducts,setCartProducts,addProduct,removeProduct,clearCart}}>
+    <CartContext.Provider value={{cartItems, setCartItems, addProduct, removeProduct, clearCart}}>
       {children}
     </CartContext.Provider>
   );

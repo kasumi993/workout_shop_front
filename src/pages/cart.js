@@ -1,215 +1,193 @@
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/context/CartContext";
-import axios from "axios";
-import Header from "@/components/header/Header";
+import { HiOutlineTrash, HiOutlineShoppingCart, HiOutlineCheckCircle } from "react-icons/hi2";
 
 export default function CartPage() {
-  const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
-  const [products, setProducts] = useState([]);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [city, setCity] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [streetAddress, setStreetAddress] = useState('');
-  const [country, setCountry] = useState('');
+  const { cartItems, setCartItems, addProduct, removeProduct, clearCart } = useContext(CartContext);
+  const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [discount, setDiscount] = useState(0);
 
-  useEffect(() => {
-    if (cartProducts.length > 0) {
-      axios.post('/api/cart', { ids: cartProducts })
-        .then(response => {
-          setProducts(response.data);
-        })
-    } else {
-      setProducts([]);
+  const removeItem = (id) => {
+    setCartItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const applyPromoCode = () => {
+    if (promoCode.toLowerCase() === 'save10') {
+      setDiscount(0.1);
     }
-  }, [cartProducts]);
+  };
 
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    if (window?.location.href.includes('success')) {
-      setIsSuccess(true);
-      clearCart();
-    }
-  }, []);
-
-  function moreOfThisProduct(id) {
-    addProduct(id);
-  }
-
-  function lessOfThisProduct(id) {
-    removeProduct(id);
-  }
-
-  async function goToPayment() {
-    const response = await axios.post('/api/checkout', {
-      name, email, city, postalCode, streetAddress, country,
-      cartProducts,
-    });
-    if (response.data.url) {
-      window.location = response.data.url;
-    }
-  }
-
-  let total = 0;
-  for (const productId of cartProducts) {
-    const price = products.find(p => p.id === productId)?.price || 0;
-    total += price;
-  }
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const deliveryFee = subtotal > 50000 ? 0 : 2500;
+  const discountAmount = subtotal * discount;
+  const total = subtotal - discountAmount + deliveryFee;
 
   if (isSuccess) {
     return (
-      <>
-        <Header />
-        {/* Center implementation directly */}
-        <div className="max-w-[800px] mx-auto px-5">
-          <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-10 mt-10">
-            <div className="bg-white rounded-lg p-8">
-              <h1 className="text-2xl font-bold">Thanks for your order!</h1>
-              <p className="mt-2">We will email you when your order will be sent.</p>
-            </div>
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <HiOutlineCheckCircle className="text-green-500 text-6xl mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Commande confirmée!</h1>
+            <p className="text-gray-600 mb-6">Nous vous enverrons un email avec les détails de votre commande.</p>
+            <button className="inline-block bg-gray-900 text-white px-6 py-3 rounded-md hover:bg-gray-800 transition duration-300">
+              Continuer vos achats
+            </button>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <Header />
-      {/* Center implementation directly */}
-      <div className="max-w-[800px] mx-auto px-5">
-        <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-10 mt-10">
-          <div className="bg-white rounded-lg p-8">
-            <h2 className="text-xl font-bold mb-4">Cart</h2>
-            {!cartProducts?.length && (
-              <div>Your cart is empty</div>
-            )}
-            {products?.length > 0 && (
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left pb-2">Product</th>
-                    <th className="text-left pb-2">Quantity</th>
-                    <th className="text-left pb-2">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map(product => (
-                    <tr key={product.id} className="border-b">
-                      <td className="py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-[70px] h-[100px] p-1 border border-gray-200 rounded-lg flex items-center justify-center md:w-[100px] md:p-2">
-                            <img 
-                              src={product.images[0]} 
-                              alt="" 
-                              className="max-w-[60px] max-h-[60px] md:max-w-[80px] md:max-h-[80px]"
-                            />
-                          </div>
-                          {product.title}
-                        </div>
-                      </td>
-                      <td className="py-4">
-                        <div className="flex items-center gap-2">
-                          {/* Button implementation directly */}
-                          <button 
-                            onClick={() => lessOfThisProduct(product.id)}
-                            className="border-0 py-1 px-3 rounded cursor-pointer inline-flex items-center no-underline font-medium font-roboto bg-black text-white"
-                          >
-                            -
-                          </button>
-                          <span className="block md:inline-block px-4 md:px-2">
-                            {cartProducts.filter(id => id === product.id).length}
-                          </span>
-                          <button 
-                            onClick={() => moreOfThisProduct(product.id)}
-                            className="border-0 py-1 px-3 rounded cursor-pointer inline-flex items-center no-underline font-medium font-roboto bg-black text-white"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </td>
-                      <td className="py-4">
-                        ${cartProducts.filter(id => id === product.id).length * product.price}
-                      </td>
-                    </tr>
-                  ))}
-                  <tr>
-                    <td className="pt-4"></td>
-                    <td className="pt-4"></td>
-                    <td className="pt-4 font-bold">${total}</td>
-                  </tr>
-                </tbody>
-              </table>
-            )}
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">Votre Panier</h1>
+        
+        {cartItems.length === 0 ? (
+          <div className="bg-white rounded-lg shadow p-12 text-center">
+            <HiOutlineShoppingCart className="text-gray-300 text-6xl mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-600 mb-2">Votre panier est vide</h2>
+            <p className="text-gray-500 mb-6">Découvrez nos produits et commencez vos achats!</p>
+            <button className="inline-block bg-gray-900 text-white px-6 py-3 rounded-md hover:bg-gray-800 transition duration-300">
+              Voir nos produits
+            </button>
           </div>
-
-          {!!cartProducts?.length && (
-            <div className="bg-white rounded-lg p-8">
-              <h2 className="text-xl font-bold mb-4">Order information</h2>
-              <input
-                type="text"
-                placeholder="Name"
-                value={name}
-                name="name"
-                onChange={ev => setName(ev.target.value)}
-                className="w-full mb-4 p-2 border rounded"
-              />
-              <input
-                type="text"
-                placeholder="Email"
-                value={email}
-                name="email"
-                onChange={ev => setEmail(ev.target.value)}
-                className="w-full mb-4 p-2 border rounded"
-              />
-              <div className="flex gap-2 mb-4">
-                <input
-                  type="text"
-                  placeholder="City"
-                  value={city}
-                  name="city"
-                  onChange={ev => setCity(ev.target.value)}
-                  className="flex-1 p-2 border rounded"
-                />
-                <input
-                  type="text"
-                  placeholder="Postal Code"
-                  value={postalCode}
-                  name="postalCode"
-                  onChange={ev => setPostalCode(ev.target.value)}
-                  className="flex-1 p-2 border rounded"
-                />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Cart Items */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-lg shadow">
+                {cartItems.map(item => (
+                  <div key={item.id} className="border-b last:border-b-0">
+                    <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      {/* Product Image */}
+                      <div className="w-24 h-24 flex-shrink-0">
+                        <img
+                          src={item.images[0]}
+                          alt={item.title}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      </div>
+                      
+                      {/* Product Info */}
+                      <div className="flex-grow">
+                        <h3 className="font-semibold text-gray-800 mb-1">{item.title}</h3>
+                        <p className="text-gray-500 text-sm mb-2">{item.description}</p>
+                        
+                        {/* Mobile Layout */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => addProduct(item.id, -1)}
+                              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-200"
+                            >
+                              -
+                            </button>
+                            <span className="font-medium w-8 text-center">{item.quantity}</span>
+                            <button
+                              onClick={() => addProduct(item.id, 1)}
+                              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-200"
+                            >
+                              +
+                            </button>
+                          </div>
+                          
+                          <div className="flex items-center justify-between sm:gap-6">
+                            <span className="font-bold text-lg text-gray-900">
+                              {(item.quantity * item.price).toLocaleString('fr-FR')} FCFA
+                            </span>
+                            <button
+                              onClick={() => removeItem(item.id)}
+                              className="text-red-500 hover:text-red-700 transition duration-200"
+                              title="Retirer du panier"
+                            >
+                              <HiOutlineTrash className="text-xl" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <input
-                type="text"
-                placeholder="Street Address"
-                value={streetAddress}
-                name="streetAddress"
-                onChange={ev => setStreetAddress(ev.target.value)}
-                className="w-full mb-4 p-2 border rounded"
-              />
-              <input
-                type="text"
-                placeholder="Country"
-                value={country}
-                name="country"
-                onChange={ev => setCountry(ev.target.value)}
-                className="w-full mb-4 p-2 border rounded"
-              />
-              {/* Button implementation directly with black and block properties */}
-              <button 
-                onClick={goToPayment}
-                className="w-full border-0 py-1 px-3 rounded cursor-pointer flex items-center justify-center no-underline font-medium font-roboto bg-black text-white mt-4"
-              >
-                Continue to payment
-              </button>
             </div>
-          )}
-        </div>
+            
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow p-6 sticky top-4">
+                <h2 className="text-xl font-bold text-gray-800 mb-6">Résumé de la commande</h2>
+                
+                {/* Promo Code */}
+                <div className="mb-6">
+                  <label className="text-sm text-gray-600 mb-2 block">Code promo</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Entrer le code"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={applyPromoCode}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition duration-200"
+                    >
+                      Appliquer
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Price Breakdown */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Sous-total</span>
+                    <span>{subtotal.toLocaleString('fr-FR')} FCFA</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Réduction</span>
+                      <span>-{discountAmount.toLocaleString('fr-FR')} FCFA</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-gray-600">
+                    <span>Livraison</span>
+                    <span>{deliveryFee === 0 ? 'Gratuite' : `${deliveryFee.toLocaleString('fr-FR')} FCFA`}</span>
+                  </div>
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between text-lg font-bold text-gray-900">
+                      <span>Total</span>
+                      <span>{total.toLocaleString('fr-FR')} FCFA</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Checkout Button */}
+                <button
+                  onClick={() => setIsSuccess(true)}
+                  className="block w-full bg-gray-900 text-white text-center py-3 rounded-md hover:bg-gray-800 transition duration-300 font-medium"
+                >
+                  Procéder au paiement
+                </button>
+                
+                {/* Continue Shopping */}
+                <button className="block w-full text-center text-gray-600 hover:text-gray-800 mt-3 text-sm">
+                  Continuer vos achats
+                </button>
+                
+                {/* Security Info */}
+                <div className="mt-6 pt-6 border-t">
+                  <p className="text-xs text-gray-500 text-center">
+                    Paiement sécurisé avec Wave et Orange Money
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }

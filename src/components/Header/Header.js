@@ -6,7 +6,7 @@ import { CartContext } from '@/context/CartContext';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { cartProducts } = useContext(CartContext);
+  const { cartItems } = useContext(CartContext);
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchChange = (event) => {
@@ -57,9 +57,9 @@ export default function Header() {
             </Link>
             <Link href="/cart" className="relative text-white hover:text-gray-300"> {/* Icône blanche */}
               <HiOutlineShoppingCart className="text-[24px]" />
-              {cartProducts.length > 0 && (
+              {cartItems.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  {cartProducts.length}
+                  {cartItems.length}
                 </span>
               )}
             </Link>
@@ -84,9 +84,9 @@ export default function Header() {
           <Link href="/account" className="block py-2 text-white hover:text-gray-300">Mon Compte</Link>
           <Link href="/cart" className="block py-2 text-white hover:text-gray-300 relative">
             Panier
-            {cartProducts.length > 0 && (
+            {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                {cartProducts.length}
+                {cartItems.length}
               </span>
             )}
           </Link>

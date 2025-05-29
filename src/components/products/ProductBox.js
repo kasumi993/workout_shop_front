@@ -3,9 +3,9 @@ import Link from "next/link";
 import {useContext} from "react";
 import {CartContext} from "@/context/CartContext";
 
-export default function ProductBox({_id, title, description, price, images}) {
+export default function ProductBox({id, title, description, price, images}) {
   const {addProduct} = useContext(CartContext);
-  const url = '/product/'+_id;
+  const url = '/product/'+id;
   
   return (
     <div>
@@ -34,7 +34,7 @@ export default function ProductBox({_id, title, description, price, images}) {
           </div>
           <Button 
             block 
-            onClick={() => addProduct(_id)} 
+            onClick={() => addProduct(id)} 
             primary 
             outline
             className="mt-2 md:mt-0"

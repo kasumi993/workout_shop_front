@@ -55,7 +55,7 @@ export default function CartPage() {
 
   let total = 0;
   for (const productId of cartProducts) {
-    const price = products.find(p => p._id === productId)?.price || 0;
+    const price = products.find(p => p.id === productId)?.price || 0;
     total += price;
   }
 
@@ -98,7 +98,7 @@ export default function CartPage() {
                 </thead>
                 <tbody>
                   {products.map(product => (
-                    <tr key={product._id} className="border-b">
+                    <tr key={product.id} className="border-b">
                       <td className="py-4">
                         <div className="flex items-center gap-4">
                           <div className="w-[70px] h-[100px] p-1 border border-gray-200 rounded-lg flex items-center justify-center md:w-[100px] md:p-2">
@@ -115,16 +115,16 @@ export default function CartPage() {
                         <div className="flex items-center gap-2">
                           {/* Button implementation directly */}
                           <button 
-                            onClick={() => lessOfThisProduct(product._id)}
+                            onClick={() => lessOfThisProduct(product.id)}
                             className="border-0 py-1 px-3 rounded cursor-pointer inline-flex items-center no-underline font-medium font-roboto bg-black text-white"
                           >
                             -
                           </button>
                           <span className="block md:inline-block px-4 md:px-2">
-                            {cartProducts.filter(id => id === product._id).length}
+                            {cartProducts.filter(id => id === product.id).length}
                           </span>
                           <button 
-                            onClick={() => moreOfThisProduct(product._id)}
+                            onClick={() => moreOfThisProduct(product.id)}
                             className="border-0 py-1 px-3 rounded cursor-pointer inline-flex items-center no-underline font-medium font-roboto bg-black text-white"
                           >
                             +
@@ -132,7 +132,7 @@ export default function CartPage() {
                         </div>
                       </td>
                       <td className="py-4">
-                        ${cartProducts.filter(id => id === product._id).length * product.price}
+                        ${cartProducts.filter(id => id === product.id).length * product.price}
                       </td>
                     </tr>
                   ))}

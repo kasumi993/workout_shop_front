@@ -1,9 +1,28 @@
 import Header from "@/components/header/Header";
-import {mongooseConnect} from "@/lib/mongoose";
-import {Product} from "@/models/Product";
 import ProductsGrid from "@/components/products/ProductsGrid";
+import productsService from "@/services/productsService";
+import { useEffect, useState } from "react";
 
-export default function ProductsPage({products}) {
+export default function ProductsPage() {
+
+  const [products, setProducts] = useState([]);
+
+  const fetchProducts = () => {
+    productsService.getProducts()
+    .then((data) => {
+      setProducts(data);
+    })
+    .catch((error) => {
+      console.error("Error fetching products:", error);
+    });
+  }
+
+  // Fetch products when the component mounts
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+
   return (
     <>
       <Header />
@@ -13,15 +32,4 @@ export default function ProductsPage({products}) {
       </div>
     </>
   );
-}
-
-export async function getStaticProps() {
-  await mongooseConnect();
-  const products = await Product.find({}, null, {sort:{'_id':-1}});
-  return {
-    props:{
-      products: JSON.parse(JSON.stringify(products)),
-    },
-    revalidate: 60,
-  };
 }

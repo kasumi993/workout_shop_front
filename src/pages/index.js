@@ -3,13 +3,12 @@ import ProductsSection from '@/components/products/ProductsSection';
 import AboutSection from '@/components/globalComponents/AboutSection';
 import PaymentMethodsSection from '@/components/payment/PaymentMethodsSection';
 import Testimonials from '@/components/globalComponents/Testimonials';
-import { mongooseConnect } from '@/lib/mongoose';
-import { Product } from '@/models/Product';
 import MainLayout from '@/layouts/MainLayout';
 import { useState, useEffect } from 'react';
 import SlideOnScroll from '@/components/animations/SlideOnScroll';
+import ProductsService from '@/services/productsService';
 
-export default function Home({ featuredProduct, newProducts }) {
+export default function Home({ products }) {
 
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
 
@@ -37,7 +36,7 @@ export default function Home({ featuredProduct, newProducts }) {
   return (
       <MainLayout headerFixed={true} isScrolledPastSection={isScrolledPastHero}>
           <HomeTopSection />
-          <ProductsSection products={newProducts} />
+          <ProductsSection products={products} />
           <SlideOnScroll animationType="slide-top" start="top 140%">
             <div>
               <AboutSection />
@@ -58,14 +57,16 @@ export default function Home({ featuredProduct, newProducts }) {
 }
 
 export async function getStaticProps() {
-  const featuredProductId = '67ee475d268f8c2d62cdbd54';
-  await mongooseConnect();
-  const featuredProduct = await Product.findById(featuredProductId);
-  const newProducts = await Product.find({}, null, {sort: {'_id':-1}, limit:10});
+  const products = [];
+  await ProductsService.getProducts().then((data) => {
+    products.push(...data);
+  })
+  .catch((error) => {
+    console.error("Error fetching products:", error);
+  });
   return {
     props: {
-      featuredProduct: JSON.parse(JSON.stringify(featuredProduct)),
-      newProducts: JSON.parse(JSON.stringify(newProducts)),
+      products: JSON.parse(JSON.stringify(products)),
     },
     revalidate: 60, // Regenerate page at most once per minute
   };

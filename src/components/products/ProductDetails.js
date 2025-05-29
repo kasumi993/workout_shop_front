@@ -4,6 +4,7 @@ import AddToCartBtn from "../buttons/AddToCartBtn";
 import { HiOutlineClock } from "react-icons/hi";
 
 export default function ProductDetails({ product }) {
+    console.log(product);
     return (
         <div className="col-span-1 md:col-span-1">
             <h1 className="text-4xl font-light text-gray-900 mb-2">{product.title}</h1>
@@ -31,7 +32,7 @@ export default function ProductDetails({ product }) {
                 <HiOutlineClock className="mr-2 text-primary text-xl" /> Livré sous 1 ou 2 jours à Dakar 🇸🇳
             </div>
             
-            <div className="flex items-center text-gray-400 text-sm">
+            <div className="flex items-center text-gray-400 text-sm mt-2">
                 Veuillez nous contacter avant de passer commande si vous habitez hors de dakar.
             </div>
         </div>

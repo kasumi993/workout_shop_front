@@ -3,6 +3,7 @@ import Img from '../globalComponents/Img';
 import { HiChevronRight, HiChevronLeft } from 'react-icons/hi2';
 
 const ProductImages = ({ images = [], className }) => {
+    const defaultImage = '/images/noimage.png'
     const [selectedImage, setSelectedImage] = useState(0);
 
     const handleNextImage = () => {

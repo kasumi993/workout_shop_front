@@ -6,7 +6,6 @@ import FiltersAndSearch from '@/components/globalComponents/FiltersAndSearch';
 export default function Products({ products }) {
   const title = useRef(null);
   const filtersBar = useRef(null);
-  const productsList = useRef(null);
 
   return (
     <section id="products" className="py-16 bg-white">
@@ -26,12 +25,9 @@ export default function Products({ products }) {
             <FiltersAndSearch  />
           </div>
         </SlideOnScroll>
-        <SlideOnScroll ref={productsList} animationType="slide-top" start="top 130%">
-          <div ref={productsList}>
-            <ProductsList  products={products} />
-          </div>
-        </SlideOnScroll>
-      
+        <div>
+          <ProductsList products={products} />
+        </div>
       </div>
     </section>
   );

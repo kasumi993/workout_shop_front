@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { HiOutlineCheck, HiOutlinePhone, HiOutlineEnvelope, HiOutlineLocationMarker } from 'react-icons/hi2';
 import { FaWhatsapp } from 'react-icons/fa';
+import MainLayout from '@/layouts/MainLayout';
 
 export default function CheckoutPage() {
   const [step, setStep] = useState(1);
@@ -86,7 +87,8 @@ export default function CheckoutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <MainLayout>
+        <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Progress Steps */}
         <div className="mb-8">
@@ -424,6 +426,7 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    </div>
+        </div>
+    </MainLayout>
   );
 }

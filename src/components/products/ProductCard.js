@@ -11,7 +11,8 @@ export default function ProductCard({ product }) {
 
 
     const handleAddToWishlist = (e, productId) => {
-        e.stopPropagation(); // Prevent the card's onClick
+        e.preventDefault(); // Prevent navigation when clicking the button
+        e.stopPropagation();
         if (wishlist.includes(productId)) {
             // If the product is already in the wishlist, remove it
             setWishlist(wishlist.filter(id => id !== productId));
@@ -47,14 +48,22 @@ export default function ProductCard({ product }) {
                 </div>
             </div>
             <div className="p-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-1">{product.title}</h3>
-            <p className="text-gray-600 text-sm mb-3 overflow-hidden whitespace-nowrap text-ellipsis">{product.description}</p>
+            <h3 className="text-lg font-semibold text-gray-800 mb-1 line-clamp-1">{product.title}</h3>
+            <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
             <div className="flex gap-2 items-center">
                 <span className="text-green-700 font-bold">{product.price} FCFA</span>
-                <span  className="text-sm text-gray-500 font-light" >( -25 %)</span>
-                <span className="text-sm text-gray-500 font-light line-through">{product.price} FCFA</span>
+                {product.originalPrice && (
+                    <>
+                        <span className="text-sm text-gray-500 font-light">
+                            (-{Math.round((1 - product.price / product.originalPrice) * 100)}%)
+                        </span>
+                        <span className="text-sm text-gray-500 font-light line-through">
+                            {parseFloat(product.originalPrice).toLocaleString('fr-FR')} FCFA
+                        </span>
+                    </>
+                )}
             </div>
-            <AddToCartBtn className="mt-6 py-2 px-2 text-[12px]" iconClass="!text-sm" />
+            <AddToCartBtn className="mt-6 py-2 px-2 text-[12px]" iconClass="!text-sm" productId={product.id}/>
             </div>
         </Link>
     )

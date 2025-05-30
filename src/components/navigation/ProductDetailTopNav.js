@@ -1,7 +1,9 @@
-import React from 'react';
-import { HiArrowLeft, HiOutlineShare, HiOutlineHeart } from 'react-icons/hi';
+import React, { useState } from 'react';
+import { HiArrowLeft, HiOutlineShare, HiOutlineHeart, HiHeart } from 'react-icons/hi';
 
 const ProductDetailTopNav = () => {
+    const [isWishlist, setIsWishlist] = useState(false);
+
     return (
         <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
@@ -19,9 +21,13 @@ const ProductDetailTopNav = () => {
                         <HiOutlineShare className="text-primary text-xl" />
                     </span>
                 </button>
-                <button className="text-gray-600 hover:text-gray-800 flex items-center">
+                <button onClick={() => setIsWishlist(!isWishlist)} className="text-gray-600 hover:text-gray-800 flex items-center cursor-pointer">
                     Ajouter aux favoris <span className="ml-2 border border-gray-400 rounded-[100%] p-2">
-                        <HiOutlineHeart className="text-primary text-xl" />
+                        {isWishlist ? (
+                      <HiHeart className="text-red-500 text-xl" />
+                    ) : (
+                      <HiOutlineHeart className="text-primary text-xl" />
+                    )}
                     </span>
                 </button>
             </div>

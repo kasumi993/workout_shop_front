@@ -3,6 +3,8 @@ import ProductCard from '@/components/products/ProductCard';
 import ProductsListSkeleton from '@/components/products/ProductsListSkeleton';
 import { HiOutlineFunnel, HiOutlineMagnifyingGlass, HiXMark } from 'react-icons/hi2';
 import MainLayout from '@/layouts/MainLayout';
+import productsService from '@/services/productsService';
+import categoriesService from '@/services/categoriesService';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -23,26 +25,33 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     setLoading(true);
-    try {
-      const response = await fetch('/api/products');
-      const data = await response.json();
-      setProducts(data.products || []);
-      setFilteredProducts(data.products || []);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    } finally {
+    await productsService.getProducts()
+    .then((data) => {
+      setProducts(data || []);
+      setFilteredProducts(data || []);
+    })
+    .catch((error) => {
+      console.error('Failed to fetch products:', error);
+      setProducts([]);
+      setFilteredProducts([]);
+    })
+    .finally(() => {
       setLoading(false);
-    }
+    });
   };
 
   const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/categories');
-      const data = await response.json();
-      setCategories(data || []);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
+     await categoriesService.getCategories()
+      .then((data) => {
+        setCategories(data || []);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch categories:', error);
+        setCategories([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   // Filter products
@@ -93,7 +102,7 @@ export default function ProductsPage() {
         <div className="bg-white shadow-sm">
           <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Nos Produits</h1>
-            <p className="text-gray-600">Découvrez notre sélection d'équipements sportifs de qualité</p>
+            <p className="text-gray-600">Découvrez notre sélection d&apos;équipements sportifs de qualité</p>
           </div>
         </div>
 

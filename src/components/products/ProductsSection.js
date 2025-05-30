@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import SlideOnScroll from '../animations/SlideOnScroll';
 import ProductsList from './ProductsList';
-import FiltersAndSearch from '@/components/globalComponents/FiltersAndSearch';
+import FiltersAndSearch from '@/components/filters/FiltersAndSearch';
 
 export default function Products({ products }) {
   const title = useRef(null);

@@ -1,4 +1,5 @@
 import { CartContextProvider } from '@/context/CartContext';
+import { CategoriesProvider } from '@/context/CategoriesContext';
 import '../styles/globals.css';
 import { Roboto } from 'next/font/google';
 import { Roboto_Condensed } from 'next/font/google';
@@ -17,11 +18,13 @@ const robotoCondensed = Roboto_Condensed({
 
 function MyApp({ Component, pageProps }) {
   return (
-    <CartContextProvider>
-      <div className={`${roboto.variable} ${robotoCondensed.variable} font-roboto`}>
-        <Component {...pageProps} />
-      </div>
-    </CartContextProvider>
+    <CategoriesProvider>
+      <CartContextProvider>
+        <div className={`${roboto.variable} ${robotoCondensed.variable} font-roboto`}>
+          <Component {...pageProps} />
+        </div>
+      </CartContextProvider>
+    </CategoriesProvider>
   );
 }
 

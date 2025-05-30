@@ -3,11 +3,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { HiOutlineUserCircle, HiOutlineMagnifyingGlass, HiOutlineShoppingCart, HiBars3} from 'react-icons/hi2'
 import { CartContext } from '@/context/CartContext';
+import { useRouter } from 'next/router';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartItems } = useContext(CartContext);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const router = useRouter();
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -18,6 +21,13 @@ export default function Header() {
     console.log('Recherche pour :', searchQuery);
     // Ici, implémente la navigation vers la page de résultats de recherche
   };
+
+  const navLinks = [
+    { href: '/', label: 'Accueil' },
+    { href: '/products', label: 'Nos Produits' },
+    { href: '/about', label: 'A propos de nous' },
+    { href: '/contact', label: 'Nous contacter' },
+  ];
 
   return (
     <header className="relative top-0 bg-transparent w-full md:py-3 z-50"> {/* Fond noir et bords arrondis */}
@@ -31,9 +41,15 @@ export default function Header() {
           {/* Liens de navigation */}
           <div className="flex items-center space-x-6">
             <nav className="hidden lg:flex space-x-8">
-              <Link href="/products" className="text-white font-normal hover:text-gray-300 cursor-pointer">Nos Produits</Link> 
-              <Link href="/about" className="text-white font-light hover:text-gray-300 cursor-pointer">A propos de nous</Link> 
-              <Link href="/contact" className="text-white font-light hover:text-gray-300 cursor-pointer">Nous contacter</Link> 
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-white font-light hover:text-gray-300 cursor-pointer ${router.pathname === link.href ? 'text-gray-300 !font-normal' : ''}`}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </nav>
           </div>
 
@@ -52,9 +68,9 @@ export default function Header() {
                 <HiOutlineMagnifyingGlass className="text-[24px]" />
               </button>
             </form>
-            <Link href="/account" className="hidden text-white md:block hover:text-gray-300"> {/* Icône blanche */}
+            {/* <Link href="/account" className="hidden text-white md:block hover:text-gray-300"> Icône blanche
               <HiOutlineUserCircle className="text-[24px]"/>
-            </Link>
+            </Link> */}
             <Link href="/cart" className="relative text-white hover:text-gray-300"> {/* Icône blanche */}
               <HiOutlineShoppingCart className="text-[24px]" />
               {cartItems.length > 0 && (
@@ -78,6 +94,7 @@ export default function Header() {
       {/* Menu mobile déroulant */}
       {mobileMenuOpen && (
         <div className="bg-gray-800 py-2 px-4 md:hidden"> {/* Fond plus foncé pour le menu mobile */}
+          <Link href="/" className="block py-2 text-white hover:text-gray-300">Accueil</Link>
           <Link href="/products" className="block py-2 text-white hover:text-gray-300">Nos Produits</Link>
           <Link href="/about" className="block py-2 text-white hover:text-gray-300">A propos de nous</Link>
           <Link href="/contact" className="block py-2 text-white hover:text-gray-300">Nous contacter</Link>

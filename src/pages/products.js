@@ -1,66 +1,56 @@
 import { useState, useEffect } from 'react';
 import ProductCard from '@/components/products/ProductCard';
 import ProductsListSkeleton from '@/components/products/ProductsListSkeleton';
-import { HiOutlineFunnel, HiOutlineMagnifyingGlass, HiXMark } from 'react-icons/hi2';
+import { HiOutlineFunnel } from 'react-icons/hi2';
 import MainLayout from '@/layouts/MainLayout';
 import productsService from '@/services/productsService';
-import categoriesService from '@/services/categoriesService';
+import SearchBar from '@/components/filters/SearchBar';
+import FiltersMenu from '@/components/filters/FiltersMenu';
+import SortBtn from '@/components/filters/SortBtn';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
 
+
   // Fetch products
   useEffect(() => {
     fetchProducts();
-    fetchCategories();
   }, []);
 
   const fetchProducts = async () => {
     setLoading(true);
-    await productsService.getProducts()
-    .then((data) => {
+    try {
+      const data = await productsService.getProducts();
       setProducts(data || []);
       setFilteredProducts(data || []);
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error('Failed to fetch products:', error);
       setProducts([]);
       setFilteredProducts([]);
-    })
-    .finally(() => {
+    } finally {
       setLoading(false);
-    });
-  };
-
-  const fetchCategories = async () => {
-     await categoriesService.getCategories()
-      .then((data) => {
-        setCategories(data || []);
-      })
-      .catch((error) => {
-        console.error('Failed to fetch categories:', error);
-        setCategories([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    }
   };
 
   // Filter products
   useEffect(() => {
     let filtered = [...products];
 
-    // Category filter
+    // Category filter - now works with both parent and child categories
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(p => p.category === selectedCategory);
+      filtered = filtered.filter(p => {
+        // Check if product matches selected category or its parent
+        return p.category === selectedCategory || 
+               p.categorySlug === selectedCategory ||
+               p.parentCategorySlug === selectedCategory;
+      });
     }
 
     // Search filter
@@ -88,12 +78,13 @@ export default function ProductsPage() {
         filtered.sort((a, b) => a.title.localeCompare(b.title));
         break;
       default:
-        // Featured/default sorting
         break;
     }
 
     setFilteredProducts(filtered);
   }, [products, selectedCategory, searchQuery, priceRange, sortBy]);
+
+  const isLoading = loading;
 
   return (
     <MainLayout>
@@ -111,38 +102,10 @@ export default function ProductsPage() {
           <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
             <div className="flex flex-col md:flex-row gap-4">
               {/* Search */}
-              <div className="flex-1">
-                <div className="relative">
-                  <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Rechercher un produit..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <HiXMark />
-                    </button>
-                  )}
-                </div>
-              </div>
+              <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
               {/* Sort */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="featured">Populaire</option>
-                <option value="price-asc">Prix croissant</option>
-                <option value="price-desc">Prix décroissant</option>
-                <option value="name">Nom (A-Z)</option>
-              </select>
+              <SortBtn sortBy={sortBy} setSortBy={setSortBy} />
 
               {/* Filter Toggle */}
               <button
@@ -161,80 +124,19 @@ export default function ProductsPage() {
 
             {/* Filters Panel */}
             {showFilters && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Categories */}
-                  <div>
-                    <h3 className="font-medium text-gray-700 mb-2">Catégories</h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="category"
-                          value="all"
-                          checked={selectedCategory === 'all'}
-                          onChange={(e) => setSelectedCategory(e.target.value)}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">Tous les produits</span>
-                      </label>
-                      {categories.map(cat => (
-                        <label key={cat.id} className="flex items-center">
-                          <input
-                            type="radio"
-                            name="category"
-                            value={cat.slug}
-                            checked={selectedCategory === cat.slug}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="mr-2"
-                          />
-                          <span className="text-sm">{cat.name} ({cat.count})</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Price Range */}
-                  <div>
-                    <h3 className="font-medium text-gray-700 mb-2">Gamme de prix</h3>
-                    <div className="space-y-2">
-                      <input
-                        type="range"
-                        min="0"
-                        max="100000"
-                        step="5000"
-                        value={priceRange.max}
-                        onChange={(e) => setPriceRange({ ...priceRange, max: parseInt(e.target.value) })}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-sm text-gray-600">
-                        <span>0 FCFA</span>
-                        <span>{priceRange.max.toLocaleString('fr-FR')} FCFA</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Clear Filters */}
-                  <div className="flex items-end">
-                    <button
-                      onClick={() => {
-                        setSelectedCategory('all');
-                        setPriceRange({ min: 0, max: 100000 });
-                        setSearchQuery('');
-                      }}
-                      className="text-sm text-blue-600 hover:text-blue-800"
-                    >
-                      Réinitialiser les filtres
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <FiltersMenu 
+                selectedCategory={selectedCategory} 
+                setSelectedCategory={setSelectedCategory} 
+                priceRange={priceRange} 
+                setPriceRange={setPriceRange} 
+                setSearchQuery={setSearchQuery} 
+              />
             )}
           </div>
 
           {/* Results Count */}
           <div className="mb-4 text-gray-600">
-            {loading ? (
+            {isLoading ? (
               <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
             ) : (
               <span>{filteredProducts.length} produit{filteredProducts.length > 1 ? 's' : ''} trouvé{filteredProducts.length > 1 ? 's' : ''}</span>
@@ -242,7 +144,7 @@ export default function ProductsPage() {
           </div>
 
           {/* Products Grid */}
-          {loading ? (
+          {isLoading ? (
             <ProductsListSkeleton count={8} />
           ) : filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

@@ -16,10 +16,10 @@ export default function FiltersAndSearch() {
 
 
   return (
-    <div className="w-full mb-25 flex items-end justify-center gap-6">
+    <div className="mb-25">
     {/* Search and Filter Bar */}
       <div className="w-full bg-white rounded-lg shadow-sm p-4 ">
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4 justify-center">
           <Button className="px-5 py-4 rounded-lg bg-black text-white cursor-pointer">
             Tous les produits
           </Button>

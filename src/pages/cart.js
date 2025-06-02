@@ -6,6 +6,8 @@ import { CartContext } from "@/context/CartContext";
 import { HiOutlineTrash, HiOutlineShoppingCart, HiOutlineCheckCircle } from "react-icons/hi2";
 import MainLayout from "@/layouts/MainLayout";
 import LoadingSpinner from "@/components/globalComponents/LoadingSpinner";
+import { FaWhatsapp } from "react-icons/fa";
+import { HiOutlineArrowCircleLeft, HiOutlineArrowRight, HiOutlineCheck } from "react-icons/hi";
 
 export default function CartPage() {
   const router = useRouter();
@@ -40,6 +42,25 @@ export default function CartPage() {
     setTimeout(() => {
       router.push('/checkout');
     }, 500);
+  };
+
+  const handleWhatsappCheckout = () => {
+    setIsProcessing(true);
+    
+    const message = `Bonjour, je souhaite finaliser ma commande. Voici les détails :\n\n` +
+                    `Produits :\n` +
+                    cartItems.map(item => 
+                      `- ${item.title} (${item.quantity} x ${parseFloat(item.price).toLocaleString('fr-FR')} FCFA)${item.selectedProperties ? ` - ${JSON.stringify(item.selectedProperties)}` : ''}`
+                    ).join('\n') + `\n\n` +
+                    `Résumé de la commande :\n` +
+                    `Sous-total : ${subtotal.toLocaleString('fr-FR')} FCFA\n` +
+                    `Livraison : ${deliveryFee === 0 ? 'Gratuite' : `${deliveryFee.toLocaleString('fr-FR')} FCFA`}\n` +
+                    `Total : ${total.toLocaleString('fr-FR')} FCFA\n\n` +
+                    `Merci !`;
+    
+    const whatsappUrl = `https://wa.me/221761978060?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    setIsProcessing(false);
   };
 
   const formatProperties = (properties) => {
@@ -217,12 +238,30 @@ export default function CartPage() {
                   </div>
                   
                   {/* Checkout Button */}
-                  <button
+                  {/* <button
                     onClick={handleCheckout}
                     disabled={isProcessing}
                     className="block w-full bg-gray-900 text-white text-center py-3 rounded-md hover:bg-gray-800 transition duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isProcessing ? 'Traitement...' : 'Procéder au paiement'}
+                  </button> */}
+                  {/* WhatsApp */}
+                  <button
+                    onClick={handleWhatsappCheckout}
+                    className='flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all border-green-500 bg-green-50 hover:bg-green-100 w-full'
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center">
+                        <FaWhatsapp className="text-3xl text-green-500 mr-3" />
+                        <div className="flex flex-col items-start">
+                          <p className="font-medium">Commande WhatsApp</p>
+                          <p className="text-sm text-gray-500">Finaliser sur whatsapp</p>
+                        </div>
+                      </div>
+                      <div className='flex justify-center items-center w-5 h-5 rounded-full bg-green-500'>
+                          <HiOutlineArrowRight className="text-white text-xs" />
+                      </div>
+                    </div>
                   </button>
                   
                   {/* Continue Shopping */}

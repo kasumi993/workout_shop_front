@@ -10,21 +10,20 @@ export default function Testimonials() {
             name: "Aminata D.",
             image: "/images/aminata.jpg",
             rating: 5,
-            comment: "The adjustable dumbbells have been a game-changer for my home workouts. They save so much space and the quality is excellent. Delivery was quick too!"
+            comment: "Je voulais des équipements de sport maison et je les ai contactés via Facebook au temps. Ils m'ont répondu rapidement et m'ont aidé à choisir les meilleurs produits. Livraison rapide et service client exceptionnel !"
         },
         {
             name: "Ibrahima S.",
             image: "/images/ibrahima.jpg",
             rating: 4.5,
-            comment: "Great customer service! When I had an issue with my order, the brothers responded quickly on WhatsApp and resolved it immediately. Will definitely shop here again."
+            comment: "Des jeunes réactifs et disponibles. Livraison le jour même de ma commande. Bonne qualité de produits. Je recommande."
         },
         {
-          name: "Ibrahima S.",
+          name: "Malick S.",
           image: "/images/ibrahima.jpg",
-          rating: 4.5,
-          comment: "Great customer service! When I had an issue with my order, the brothers responded quickly on WhatsApp and resolved it immediately. Will definitely shop here again."
+          rating: 5,
+          comment: "Livraison le jour même. Super efficace. J'ai acheté un vélo de course maison et je l'ai toujours. Il fonctionne bien et ne prend pas trop de place.",
       },
-        // Add more testimonials...
         ];
 
   return (

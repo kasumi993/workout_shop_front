@@ -1,5 +1,7 @@
+// src/pages/_app.js
 import { CartContextProvider } from '@/context/CartContext';
 import { CategoriesProvider } from '@/context/CategoriesContext';
+import { WishlistContextProvider } from '@/context/WishlistContext';
 import '../styles/globals.css';
 import { Roboto } from 'next/font/google';
 import { Roboto_Condensed } from 'next/font/google';
@@ -20,9 +22,11 @@ function MyApp({ Component, pageProps }) {
   return (
     <CategoriesProvider>
       <CartContextProvider>
-        <div className={`${roboto.variable} ${robotoCondensed.variable} font-roboto`}>
-          <Component {...pageProps} />
-        </div>
+        <WishlistContextProvider>
+          <div className={`${roboto.variable} ${robotoCondensed.variable} font-roboto`}>
+            <Component {...pageProps} />
+          </div>
+        </WishlistContextProvider>
       </CartContextProvider>
     </CategoriesProvider>
   );

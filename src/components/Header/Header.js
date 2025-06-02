@@ -5,13 +5,16 @@ import { HiOutlineUserCircle, HiOutlineMagnifyingGlass, HiOutlineShoppingCart, H
 import { CartContext } from '@/context/CartContext';
 import { useRouter } from 'next/router';
 import { PiListHeartLight } from "react-icons/pi";
+import { useWishlist } from '@/context/WishlistContext';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartItems } = useContext(CartContext);
+  const { getWishlistCount } = useWishlist();
   const [searchQuery, setSearchQuery] = useState('');
 
   const router = useRouter();
+  const wishlistCount = getWishlistCount();
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -72,9 +75,18 @@ export default function Header() {
             {/* <Link href="/account" className="hidden text-white md:block hover:text-gray-300">
               <HiOutlineUserCircle className="text-[24px]"/>
             </Link> */}
-            <Link href="/wishlist" className="hidden text-white md:block hover:text-gray-300"> 
+            
+            {/* Wishlist Link with Counter */}
+            <Link href="/wishlist" className="hidden text-white md:block hover:text-gray-300 relative"> 
               <PiListHeartLight className="text-[24px]"/>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
+            
+            {/* Cart Link with Counter */}
             <Link href="/cart" className="relative text-white hover:text-gray-300">
               <HiOutlineShoppingCart className="text-[24px]" />
               {cartItems.length > 0 && (
@@ -103,14 +115,27 @@ export default function Header() {
           <Link href="/about" className="block py-2 text-white hover:text-gray-300">A propos de nous</Link>
           <Link href="/contact" className="block py-2 text-white hover:text-gray-300">Nous contacter</Link>
           <Link href="/account" className="block py-2 text-white hover:text-gray-300">Mon Compte</Link>
-          <Link href="/cart" className="block py-2 text-white hover:text-gray-300 relative">
+          
+          {/* Mobile Wishlist with Counter */}
+          <Link href="/wishlist" className="block py-2 text-white hover:text-gray-300 relative flex items-center">
+            Liste de souhaits
+            {wishlistCount > 0 && (
+              <span className="ml-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
+          
+          {/* Mobile Cart with Counter */}
+          <Link href="/cart" className="block py-2 text-white hover:text-gray-300 relative flex items-center">
             Panier
             {cartItems.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              <span className="ml-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                 {cartItems.length}
               </span>
             )}
           </Link>
+          
           <form onSubmit={handleSearchSubmit} className="mt-2 flex items-center bg-gray-300 rounded-md px-2 py-1">
             <input
               type="text"

@@ -56,7 +56,6 @@ export default function ProductPage() {
     }));
   };
 
-
   if (error) {
     return (
       <OopsPage />
@@ -70,8 +69,8 @@ export default function ProductPage() {
       ) : (
         <div className="mt-8">
           <div className="container mx-auto px-4">
-            {/* Navigation */}
-            <ProductDetailTopNav />
+            {/* Navigation - Pass product to get category info */}
+            <ProductDetailTopNav product={product} />
 
             {/* Main Product Section */}
             <div className="mt-8 lg:mt-18 flex flex-col lg:flex-row gap-8 lg:gap-20">

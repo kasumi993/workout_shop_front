@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { HiOutlineUserCircle, HiOutlineMagnifyingGlass, HiOutlineShoppingCart, HiBars3} from 'react-icons/hi2'
 import { CartContext } from '@/context/CartContext';
 import { useRouter } from 'next/router';
+import { PiListHeartLight } from "react-icons/pi";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -56,7 +57,7 @@ export default function Header() {
           {/* Barre de recherche Icônes de compte et panier */}
           <div className="flex items-center space-x-4">
             {/* Barre de recherche */}
-            <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center px-1 py-1 gap-3"> {/* Fond gris clair */}
+            {/* <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center px-1 py-1 gap-3">
               <input
                 type="text"
                 placeholder="Chercher..."
@@ -64,14 +65,17 @@ export default function Header() {
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
-              <button type="submit" className="text-white hover:text-gray-300"> {/* Icône de loupe blanche */}
+              <button type="submit" className="text-white hover:text-gray-300"> 
                 <HiOutlineMagnifyingGlass className="text-[24px]" />
               </button>
-            </form>
-            {/* <Link href="/account" className="hidden text-white md:block hover:text-gray-300"> Icône blanche
+            </form> */}
+            {/* <Link href="/account" className="hidden text-white md:block hover:text-gray-300">
               <HiOutlineUserCircle className="text-[24px]"/>
             </Link> */}
-            <Link href="/cart" className="relative text-white hover:text-gray-300"> {/* Icône blanche */}
+            <Link href="/wishlist" className="hidden text-white md:block hover:text-gray-300"> 
+              <PiListHeartLight className="text-[24px]"/>
+            </Link>
+            <Link href="/cart" className="relative text-white hover:text-gray-300">
               <HiOutlineShoppingCart className="text-[24px]" />
               {cartItems.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">

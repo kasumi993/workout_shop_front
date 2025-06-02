@@ -12,7 +12,7 @@ export default function Footer() {
               <Image src="/logo/logo-blue-white.svg" alt="Logo" width={180} height={129} className="object-contain" />
             </div>
             <p className="text-gray-400 mb-4">
-              Votre premier fournisseur de matériel de sport au Senegal.
+              Votre premier fournisseur de matériel de sport maison au Senegal.
             </p>
           </div>
           

@@ -67,7 +67,7 @@ export default function Hero() {
                   Vélo d'intérieur
                 </p>
                 <h3 className="text-black font-robotocondensed text-[25px] font-bold">
-                  150.000 cfa
+                  500.000 cfa
                 </h3>
               </div>
 

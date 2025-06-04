@@ -1,13 +1,12 @@
-// src/pages/product/detail/[id].js
 import { useRouter } from 'next/router';
 import { useEffect, useState, useContext } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import ProductDetailTopNav from '@/components/navigation/ProductDetailTopNav';
 import ProductImages from '@/components/products/ProductImages';
+import ProductDescTabs from '@/components/products/ProductDescTabs';
 import RelatedProducts from '@/components/products/RelatedProducts';
 import productsService from '@/services/productsService';
 import ProductDetailSkeleton from '@/components/products/ProductDetailSkeleton';
-import { FaStar } from 'react-icons/fa';
 import OopsPage from '@/components/globalComponents/OopsPage';
 import ProductDetails from '@/components/products/ProductDetails';
 
@@ -18,11 +17,13 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedProperties, setSelectedProperties] = useState({});
-  const [activeTab, setActiveTab] = useState('description');
+  const [reviews, setReviews] = useState([]); // Reviews state - empty for now
 
   useEffect(() => {
     if (id) {
       fetchProductById(id);
+      // TODO: Fetch reviews when backend is ready
+      // fetchProductReviews(id);
     }
   }, [id]);
 
@@ -50,6 +51,17 @@ export default function ProductPage() {
     }
   };
 
+  // TODO: Implement when reviews backend is ready
+  // const fetchProductReviews = async (productId) => {
+  //   try {
+  //     const reviewsData = await reviewsService.getProductReviews(productId);
+  //     setReviews(reviewsData || []);
+  //   } catch (error) {
+  //     console.error("Error fetching reviews:", error);
+  //     setReviews([]);
+  //   }
+  // };
+
   const handlePropertyChange = (propertyName, value) => {
     setSelectedProperties(prev => ({
       ...prev,
@@ -69,176 +81,47 @@ export default function ProductPage() {
         <ProductDetailSkeleton />
       ) : (
         <div className="mt-4 md:mt-8">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {/* Navigation - Pass product to get category info */}
             <ProductDetailTopNav product={product} />
 
             {/* Main Product Section */}
-            <div className="mt-6 md:mt-8 lg:mt-18 flex flex-col xl:flex-row gap-6 md:gap-8 lg:gap-20">
-              {/* Left: Images */}
-              <div className='w-full xl:w-[60%]'>
-                <ProductImages images={product?.images || []} />
+            <div className="mt-6 md:mt-8 lg:mt-12 xl:mt-16">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8 lg:gap-12 xl:gap-16">
+                {/* Left: Images - Takes 3/5 of width on XL screens */}
+                <div className='lg:col-span-3'>
+                  <ProductImages images={product?.images || []} />
 
-                {/* Description Tabs */}
-                <div className="mt-8 md:mt-12 lg:mt-16">
-                  <div className="border-b">
-                    <div className="flex space-x-4 md:space-x-8 overflow-x-auto">
-                      {['description', 'shipping', 'reviews'].map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveTab(tab)}
-                          className={`py-3 md:py-4 px-2 font-medium transition-colors relative whitespace-nowrap text-sm md:text-base ${
-                            activeTab === tab
-                              ? 'text-gray-900'
-                              : 'text-gray-500 hover:text-gray-700'
-                          }`}
-                        >
-                          {tab === 'description' && 'Description'}
-                          {tab === 'shipping' && 'Livraison & Retours'}
-                          {tab === 'reviews' && 'Avis (127)'}
-                          {activeTab === tab && (
-                            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"></span>
-                          )}
-                        </button>
-                      ))}
-                    </div>
+                  {/* Product Tabs - Show on desktop only, positioned after images */}
+                  <div className="hidden lg:block">
+                    <ProductDescTabs product={product} reviews={reviews} />
                   </div>
+                </div>
 
-                  <div className="py-6 md:py-8">
-                    {activeTab === 'description' && (
-                      <div className="prose max-w-none">
-                        <h3 className="text-lg md:text-xl font-semibold mb-4">À propos de ce produit</h3>
-                        <p className="text-gray-600 mb-6 text-sm md:text-base">
-                          {product?.description || 'Aucune description disponible.'}
-                        </p>
-                        
-                        {product?.features && (
-                          <div>
-                            <h4 className="font-semibold text-gray-900 mb-3 text-base md:text-lg">Points forts</h4>
-                            <ul className="list-disc list-inside space-y-2 text-gray-600 text-sm md:text-base">
-                              <li>Matériaux de haute qualité</li>
-                              <li>Design ergonomique pour un confort optimal</li>
-                              <li>Facile à utiliser et à entretenir</li>
-                              <li>Convient aux débutants et aux professionnels</li>
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {activeTab === 'shipping' && (
-                      <div className="prose max-w-none">
-                        <h3 className="text-lg md:text-xl font-semibold mb-4">Informations de livraison</h3>
-                        <div className="space-y-4 text-gray-600 text-sm md:text-base">
-                          <div>
-                            <h4 className="font-medium text-gray-800 mb-2">Délais de livraison</h4>
-                            <ul className="list-disc list-inside space-y-1">
-                              <li>Dakar : 1-2 jours ouvrables</li>
-                              <li>Banlieue Dakar : 2-3 jours ouvrables</li>
-                              <li>Autres régions : 3-5 jours ouvrables</li>
-                            </ul>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium text-gray-800 mb-2">Frais de livraison</h4>
-                            <ul className="list-disc list-inside space-y-1">
-                              <li>Gratuit pour les commandes de plus de 150.000 FCFA</li>
-                              <li>Entre 2000 - 5000 FCFA pour les commandes en dessous de 150.000 FCFA</li>
-                            </ul>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium text-gray-800 mb-2">Politique de retour</h4>
-                            <p>Nous acceptons les retours dans les 7 jours suivant la livraison si le produit est dans son état d&apos;origine.</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeTab === 'reviews' && (
-                      <div>
-                        <div className="mb-6">
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                            <div className="text-center">
-                              <div className="text-3xl md:text-4xl font-bold">4.5</div>
-                              <div className="flex text-yellow-400 my-1 justify-center">
-                                {[...Array(5)].map((_, i) => (
-                                  <FaStar key={i} className={`text-sm md:text-base ${i < 4 ? '' : 'text-gray-300'}`} />
-                                ))}
-                              </div>
-                              <div className="text-xs md:text-sm text-gray-600">127 avis</div>
-                            </div>
-                            
-                            <div className="flex-1 w-full sm:w-auto">
-                              {[5, 4, 3, 2, 1].map((stars) => (
-                                <div key={stars} className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs md:text-sm w-4">{stars}</span>
-                                  <FaStar className="text-yellow-400 text-xs" />
-                                  <div className="flex-1 bg-gray-200 h-1.5 md:h-2 rounded-full overflow-hidden">
-                                    <div 
-                                      className="bg-yellow-400 h-full"
-                                      style={{ width: `${stars === 5 ? 60 : stars === 4 ? 30 : stars === 3 ? 10 : 0}%` }}
-                                    ></div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="border-t pt-6 space-y-6">
-                          {[
-                            {
-                              name: 'Marie D.',
-                              date: '15 Mars 2024',
-                              rating: 5,
-                              comment: 'Excellent produit! La qualité est au rendez-vous et la livraison était rapide.',
-                            },
-                            {
-                              name: 'Amadou S.',
-                              date: '10 Mars 2024',
-                              rating: 4,
-                              comment: 'Très bon produit, conforme à la description. Je recommande!',
-                            }
-                          ].map((review, index) => (
-                            <div key={index} className="border-b pb-6 last:border-0">
-                              <div className="flex items-start gap-3 md:gap-4">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                  <span className="font-medium text-gray-700 text-sm md:text-base">{review.name[0]}</span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-1">
-                                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                                      <span className="font-medium text-sm md:text-base">{review.name}</span>
-                                      <span className="text-gray-500 text-xs md:text-sm">{review.date}</span>
-                                    </div>
-                                    <div className="flex text-yellow-400 text-xs md:text-sm">
-                                      {[...Array(5)].map((_, i) => (
-                                        <FaStar key={i} className={i < review.rating ? '' : 'text-gray-300'} />
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <p className="text-gray-600 text-sm md:text-base">{review.comment}</p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                {/* Right: Product Info - Takes 2/5 of width on XL screens */}
+                <div className='lg:col-span-2'>
+                  <div className="">
+                    <ProductDetails 
+                      product={product} 
+                      selectedProperties={selectedProperties} 
+                      handlePropertyChange={handlePropertyChange}
+                      reviews={reviews}
+                    />
                   </div>
                 </div>
               </div>
 
-              {/* Right: Product Info */}
-              <div className='w-full xl:w-[40%]'>
-                <ProductDetails product={product} selectedProperties={selectedProperties} handlePropertyChange={handlePropertyChange} />
+              {/* Product Tabs - Show on mobile/tablet only, positioned after product details */}
+              <div className="lg:hidden">
+                <ProductDescTabs product={product} reviews={reviews} />
               </div>
             </div>
 
             {/* Related Products */}
             <RelatedProducts product={product} />
           </div>
+          
+          {/* Remove custom scrollbar styles since they're now in ProductTabs component */}
         </div>
       )}
     </MainLayout>

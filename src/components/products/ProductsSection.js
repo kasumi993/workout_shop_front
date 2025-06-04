@@ -50,7 +50,7 @@ export default function Products() {
         
 
         <SlideOnScroll ref={filtersBar} animationType="slide-top" start="top 80%">
-          <div ref={filtersBar}>
+          <div ref={filtersBar} className="mb-12 lg:mb-25">
             <FiltersAndSearch 
               products={products}
               setFilteredProducts={setFilteredProducts}

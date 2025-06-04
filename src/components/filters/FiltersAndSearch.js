@@ -143,7 +143,7 @@ export default function FiltersAndSearch({
   }, [selectedCategory, priceRange]);
 
   return (
-    <div className="mb-12 lg:mb-25">
+    <div className="mb-4 lg:mb-6">
       <div className="w-full bg-white rounded-lg shadow-sm p-3 sm:p-4">
         <div className="flex flex-col space-y-3 sm:space-y-4 md:space-y-0 md:flex-row md:gap-4 justify-center">
           <Button className={`hidden md:flex px-3 sm:px-5 py-2 sm:py-4 rounded-lg bg-black text-white cursor-pointer text-sm sm:text-base whitespace-nowrap ${hideAllProductsBtn ? 'md:hidden' : ''}`}>

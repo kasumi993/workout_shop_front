@@ -1,3 +1,4 @@
+// src/pages/product/detail/[id].js
 import { useRouter } from 'next/router';
 import { useEffect, useState, useContext } from 'react';
 import MainLayout from '@/layouts/MainLayout';
@@ -67,26 +68,26 @@ export default function ProductPage() {
       {loading ? (
         <ProductDetailSkeleton />
       ) : (
-        <div className="mt-8">
+        <div className="mt-4 md:mt-8">
           <div className="container mx-auto px-4">
             {/* Navigation - Pass product to get category info */}
             <ProductDetailTopNav product={product} />
 
             {/* Main Product Section */}
-            <div className="mt-8 lg:mt-18 flex flex-col lg:flex-row gap-8 lg:gap-20">
+            <div className="mt-6 md:mt-8 lg:mt-18 flex flex-col xl:flex-row gap-6 md:gap-8 lg:gap-20">
               {/* Left: Images */}
-              <div className='w-full lg:w-[60%]'>
+              <div className='w-full xl:w-[60%]'>
                 <ProductImages images={product?.images || []} />
 
                 {/* Description Tabs */}
-                <div className="mt-16">
+                <div className="mt-8 md:mt-12 lg:mt-16">
                   <div className="border-b">
-                    <div className="flex space-x-8">
+                    <div className="flex space-x-4 md:space-x-8 overflow-x-auto">
                       {['description', 'shipping', 'reviews'].map((tab) => (
                         <button
                           key={tab}
                           onClick={() => setActiveTab(tab)}
-                          className={`py-4 px-2 font-medium transition-colors relative ${
+                          className={`py-3 md:py-4 px-2 font-medium transition-colors relative whitespace-nowrap text-sm md:text-base ${
                             activeTab === tab
                               ? 'text-gray-900'
                               : 'text-gray-500 hover:text-gray-700'
@@ -103,18 +104,18 @@ export default function ProductPage() {
                     </div>
                   </div>
 
-                  <div className="py-8">
+                  <div className="py-6 md:py-8">
                     {activeTab === 'description' && (
                       <div className="prose max-w-none">
-                        <h3 className="text-lg font-semibold mb-4">À propos de ce produit</h3>
-                        <p className="text-gray-600 mb-6">
+                        <h3 className="text-lg md:text-xl font-semibold mb-4">À propos de ce produit</h3>
+                        <p className="text-gray-600 mb-6 text-sm md:text-base">
                           {product?.description || 'Aucune description disponible.'}
                         </p>
                         
                         {product?.features && (
                           <div>
-                            <h4 className="font-semibold text-gray-900 mb-3">Points forts</h4>
-                            <ul className="list-disc list-inside space-y-2 text-gray-600">
+                            <h4 className="font-semibold text-gray-900 mb-3 text-base md:text-lg">Points forts</h4>
+                            <ul className="list-disc list-inside space-y-2 text-gray-600 text-sm md:text-base">
                               <li>Matériaux de haute qualité</li>
                               <li>Design ergonomique pour un confort optimal</li>
                               <li>Facile à utiliser et à entretenir</li>
@@ -127,8 +128,8 @@ export default function ProductPage() {
 
                     {activeTab === 'shipping' && (
                       <div className="prose max-w-none">
-                        <h3 className="text-lg font-semibold mb-4">Informations de livraison</h3>
-                        <div className="space-y-4 text-gray-600">
+                        <h3 className="text-lg md:text-xl font-semibold mb-4">Informations de livraison</h3>
+                        <div className="space-y-4 text-gray-600 text-sm md:text-base">
                           <div>
                             <h4 className="font-medium text-gray-800 mb-2">Délais de livraison</h4>
                             <ul className="list-disc list-inside space-y-1">
@@ -157,23 +158,23 @@ export default function ProductPage() {
                     {activeTab === 'reviews' && (
                       <div>
                         <div className="mb-6">
-                          <div className="flex items-center gap-4">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                             <div className="text-center">
-                              <div className="text-4xl font-bold">4.5</div>
-                              <div className="flex text-yellow-400 my-1">
+                              <div className="text-3xl md:text-4xl font-bold">4.5</div>
+                              <div className="flex text-yellow-400 my-1 justify-center">
                                 {[...Array(5)].map((_, i) => (
-                                  <FaStar key={i} className={i < 4 ? '' : 'text-gray-300'} />
+                                  <FaStar key={i} className={`text-sm md:text-base ${i < 4 ? '' : 'text-gray-300'}`} />
                                 ))}
                               </div>
-                              <div className="text-sm text-gray-600">127 avis</div>
+                              <div className="text-xs md:text-sm text-gray-600">127 avis</div>
                             </div>
                             
-                            <div className="flex-1">
+                            <div className="flex-1 w-full sm:w-auto">
                               {[5, 4, 3, 2, 1].map((stars) => (
                                 <div key={stars} className="flex items-center gap-2 mb-1">
-                                  <span className="text-sm w-4">{stars}</span>
+                                  <span className="text-xs md:text-sm w-4">{stars}</span>
                                   <FaStar className="text-yellow-400 text-xs" />
-                                  <div className="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+                                  <div className="flex-1 bg-gray-200 h-1.5 md:h-2 rounded-full overflow-hidden">
                                     <div 
                                       className="bg-yellow-400 h-full"
                                       style={{ width: `${stars === 5 ? 60 : stars === 4 ? 30 : stars === 3 ? 10 : 0}%` }}
@@ -201,23 +202,23 @@ export default function ProductPage() {
                             }
                           ].map((review, index) => (
                             <div key={index} className="border-b pb-6 last:border-0">
-                              <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                  <span className="font-medium text-gray-700">{review.name[0]}</span>
+                              <div className="flex items-start gap-3 md:gap-4">
+                                <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="font-medium text-gray-700 text-sm md:text-base">{review.name[0]}</span>
                                 </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between mb-2">
-                                    <div>
-                                      <span className="font-medium">{review.name}</span>
-                                      <span className="text-gray-500 text-sm ml-2">{review.date}</span>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-1">
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                      <span className="font-medium text-sm md:text-base">{review.name}</span>
+                                      <span className="text-gray-500 text-xs md:text-sm">{review.date}</span>
                                     </div>
-                                    <div className="flex text-yellow-400 text-sm">
+                                    <div className="flex text-yellow-400 text-xs md:text-sm">
                                       {[...Array(5)].map((_, i) => (
                                         <FaStar key={i} className={i < review.rating ? '' : 'text-gray-300'} />
                                       ))}
                                     </div>
                                   </div>
-                                  <p className="text-gray-600">{review.comment}</p>
+                                  <p className="text-gray-600 text-sm md:text-base">{review.comment}</p>
                                 </div>
                               </div>
                             </div>
@@ -230,7 +231,7 @@ export default function ProductPage() {
               </div>
 
               {/* Right: Product Info */}
-              <div className='w-full lg:w-[40%]'>
+              <div className='w-full xl:w-[40%]'>
                 <ProductDetails product={product} selectedProperties={selectedProperties} handlePropertyChange={handlePropertyChange} />
               </div>
             </div>

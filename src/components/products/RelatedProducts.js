@@ -1,3 +1,4 @@
+// src/components/products/RelatedProducts.js
 import { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import ProductCardSkeleton from './ProductCardSkeleton';
@@ -113,24 +114,24 @@ export default function RelatedProducts({ product }) {
   }
 
   return (
-    <div className="py-8 mt-12">
+    <div className="py-6 md:py-8 mt-8 md:mt-12">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">
+        <div className="flex items-center justify-between mb-4 md:mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">
             Produits similaires
           </h2>
         </div>
         
         {loading ? (
-          // Loading skeleton
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          // Loading skeleton - responsive grid
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
             {[...Array(4)].map((_, index) => (
               <ProductCardSkeleton key={index} />
             ))}
           </div>
         ) : relatedProducts.length > 0 ? (
-          // Related products grid
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          // Related products grid - responsive
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
             {relatedProducts.map((relatedProduct) => (
               <ProductCard
                 key={relatedProduct.id}
@@ -140,13 +141,13 @@ export default function RelatedProducts({ product }) {
           </div>
         ) : (
           // No related products found
-          <div className="text-center py-8">
-            <p className="text-gray-500 mb-4">
+          <div className="text-center py-6 md:py-8">
+            <p className="text-gray-500 mb-4 text-sm md:text-base">
               Aucun produit similaire trouvé
             </p>
             <Link 
               href="/products" 
-              className="inline-block bg-gray-900 text-white px-6 py-3 rounded-md hover:bg-gray-800 transition duration-300"
+              className="inline-block bg-gray-900 text-white px-4 md:px-6 py-2 md:py-3 rounded-md hover:bg-gray-800 transition duration-300 text-sm md:text-base"
             >
               Voir tous nos produits
             </Link>

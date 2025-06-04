@@ -87,7 +87,7 @@ export default function ProductCard({ product }) {
                         </>
                     )}
                 </div>
-                <AddToCartBtn className="mt-6 py-2 px-2 text-[12px]" iconClass="!text-sm" productId={product.id}/>
+                <AddToCartBtn className="mt-6 py-2 px-2 text-[12px]" iconClass="text-[24px] md:text-sm relative top-0.5" productId={product.id}/>
             </div>
         </Link>
     )

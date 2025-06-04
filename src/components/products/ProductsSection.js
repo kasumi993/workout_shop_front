@@ -1,11 +1,40 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SlideOnScroll from '../animations/SlideOnScroll';
 import ProductsList from './ProductsList';
 import FiltersAndSearch from '@/components/filters/FiltersAndSearch';
+import ProductsService from '@/services/productsService';
 
-export default function Products({ products }) {
+export default function Products() {
   const title = useRef(null);
   const filtersBar = useRef(null);
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
+  const [searchQuery, setSearchQuery] = useState('');
+
+
+
+  // Fetch products
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const data = await ProductsService.getProducts();
+      setProducts(data || []);
+      setFilteredProducts(data || []);
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+      setProducts([]);
+      setFilteredProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section id="products" className="py-16 bg-white">
@@ -22,11 +51,20 @@ export default function Products({ products }) {
 
         <SlideOnScroll ref={filtersBar} animationType="slide-top" start="top 80%">
           <div ref={filtersBar}>
-            <FiltersAndSearch  />
+            <FiltersAndSearch 
+              products={products}
+              setFilteredProducts={setFilteredProducts}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery} 
+             />
           </div>
         </SlideOnScroll>
         <div>
-          <ProductsList products={products} />
+          <ProductsList products={filteredProducts} />
         </div>
       </div>
     </section>

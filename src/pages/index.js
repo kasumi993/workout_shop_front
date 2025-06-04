@@ -6,7 +6,6 @@ import Testimonials from '@/components/globalComponents/Testimonials';
 import MainLayout from '@/layouts/MainLayout';
 import { useState, useEffect } from 'react';
 import SlideOnScroll from '@/components/animations/SlideOnScroll';
-import ProductsService from '@/services/productsService';
 
 export default function Home({ products }) {
 
@@ -36,7 +35,7 @@ export default function Home({ products }) {
   return (
       <MainLayout headerFixed={true} isScrolledPastSection={isScrolledPastHero}>
           <HomeTopSection />
-          <ProductsSection products={products} />
+          <ProductsSection />
           <SlideOnScroll animationType="slide-top" start="top 140%">
             <div>
               <AboutSection />
@@ -54,20 +53,4 @@ export default function Home({ products }) {
           </SlideOnScroll>
       </MainLayout>
   );
-}
-
-export async function getStaticProps() {
-  const products = [];
-  await ProductsService.getProducts().then((data) => {
-    products.push(...data);
-  })
-  .catch((error) => {
-    console.error("Error fetching products:", error);
-  });
-  return {
-    props: {
-      products: JSON.parse(JSON.stringify(products)),
-    },
-    revalidate: 60, // Regenerate page at most once per minute
-  };
 }

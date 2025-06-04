@@ -1,18 +1,27 @@
-import { useRef } from 'react';
+import { createRef, useRef } from 'react';
 import SlideOnScroll from '../animations/SlideOnScroll';
 import ProductCard from './ProductCard';
 
-export default function Products({ products }) {
-  const productsCard = useRef(null);
+export default function ProductsList({ products }) {
+  const productRefs = useRef(products?.map(() => createRef()));
   return (
-    <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
-      {products.map((product) => (
-        <SlideOnScroll key={product.id} ref={productsCard} animationType="slide-top" start="top 130%">
-          <div ref={productsCard}>
-            <ProductCard product={product} key={product.id} />
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 sm:gap-4">
+      {products.map((product, index) => {
+        const productRef = productRefs.current[index];
+        return (
+        <div key={product.id} ref={productRef}>
+            <SlideOnScroll 
+              start = 'top 180%'
+              animationType="slide-top" 
+              delay={index * 0.1} 
+            >
+              <div>
+                <ProductCard product={product} />
+              </div>
+            </SlideOnScroll>
           </div>
-        </SlideOnScroll>
-      ))}
+        )
+  })}
     </div>
   );
 }

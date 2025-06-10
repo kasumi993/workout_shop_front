@@ -21,7 +21,7 @@ export default function About() {
             </h2>
           <p className="text-gray-600 mb-4 text-sm sm:text-base leading-relaxed text-center md:text-left">
               Workout-Shop est une initiative de deux frères sénégalais, Assane et Abdoulaye Gueye. 
-              Passionnés de sport et de fitness, ils se sont donné pour mission d'aider les autres à 
+              Passionnés de sport et de fitness, ils se sont donné pour mission d&apos;aider les autres à 
               améliorer leur santé au quotidien.
             </p>
             <p className="text-gray-600 mb-6 text-sm sm:text-base leading-relaxed text-center md:text-left">

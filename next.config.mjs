@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com', 'upload.wikimedia.org', 'workoutshop.s3.eu-north-1.amazonaws.com'],
-    // You can add more domains as needed:
-    // domains: ['images.unsplash.com', 'example.com', 'another-domain.com'],
+    domains: ['images.unsplash.com', 'upload.wikimedia.org','pub-3dbe164ddc2940d0b9e85e3a5df22a9a.r2.dev'],
   },
   reactStrictMode: true,
   compiler: {

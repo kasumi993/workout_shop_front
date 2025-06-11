@@ -33,7 +33,7 @@ api.interceptors.response.use(
       // Handle 401 Unauthorized errors
       if (error.response && error.response.status === 401) {
         // Redirect to login page - NextAuth will handle the session expiry
-        window.location.href = '/login';
+        console.error('Unauthorized:', error.response.data);
       }
       
       // Handle 403 Forbidden errors (authenticated but not authorized)

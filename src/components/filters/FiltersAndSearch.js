@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import Button from "../globalComponents/Button";
 import SearchBar from "./SearchBar";
 import FiltersMenu from "./FiltersMenu";
@@ -65,6 +65,9 @@ export default function FiltersAndSearch({
   const [internalSortBy, setInternalSortBy] = useState(DEFAULT_SORT);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Track if we've set initial products to prevent clearing them
+  const hasSetInitialProducts = useRef(false);
+
   // Determine which state to use
   const searchQuery = externalSearchQuery ?? internalSearchQuery;
   const selectedCategory = externalSelectedCategory ?? internalSelectedCategory;
@@ -122,25 +125,62 @@ export default function FiltersAndSearch({
 
   // Memoized filtered products
   const filteredProducts = useMemo(() => {
+    // Don't filter if products is empty
+    if (!products || products.length === 0) {
+      return [];
+    }
+
     let filtered = filterByCategory(products, selectedCategory);
     filtered = filterBySearch(filtered, searchQuery);
     filtered = filterByPrice(filtered, priceRange);
     return sortProducts(filtered, sortBy);
   }, [products, selectedCategory, searchQuery, priceRange, sortBy]);
 
-  // Update parent component when filtered products change
-  useEffect(() => {
-    setFilteredProducts(filteredProducts);
-  }, [filteredProducts, setFilteredProducts]);
-
-  // Memoized active filters count
+    // Memoized active filters count
   const activeFiltersCount = useMemo(() => {
     const filters = [
       selectedCategory !== DEFAULT_CATEGORY,
-      priceRange.max < DEFAULT_PRICE_RANGE.max || priceRange.min > DEFAULT_PRICE_RANGE.min
+      priceRange.max < DEFAULT_PRICE_RANGE.max || priceRange.min > DEFAULT_PRICE_RANGE.min,
+      searchQuery && searchQuery.length > 0
     ];
     return filters.filter(Boolean).length;
-  }, [selectedCategory, priceRange]);
+  }, [selectedCategory, priceRange, searchQuery]);
+
+  // Check if there are active filters
+  const hasActiveFilters = activeFiltersCount > 0;
+
+    // Reset all filters function
+  const handleResetFilters = useCallback(() => {
+    handleSetSelectedCategory(DEFAULT_CATEGORY);
+    handleSetPriceRange(DEFAULT_PRICE_RANGE);
+    handleSetSearchQuery('');
+    handleSetSortBy(DEFAULT_SORT);
+  }, [handleSetSelectedCategory, handleSetPriceRange, handleSetSearchQuery, handleSetSortBy]);
+
+  // Update parent component when filtered products change
+  useEffect(() => {
+    if (products && products.length > 0) {
+      if (!hasSetInitialProducts.current && filteredProducts.length > 0) {
+        // First time setting products
+        hasSetInitialProducts.current = true;
+        setFilteredProducts(filteredProducts, hasActiveFilters, handleResetFilters);
+      } else if (hasSetInitialProducts.current) {
+        // Subsequent updates after initial load
+        setFilteredProducts(filteredProducts, hasActiveFilters, handleResetFilters);
+      }
+    } else if (products && products.length === 0) {
+      // Handle empty products case
+      setFilteredProducts([], hasActiveFilters, handleResetFilters);
+    }
+  }, [filteredProducts, products, hasActiveFilters, handleResetFilters]);
+
+  // Reset the flag when products change (new data loaded)
+  useEffect(() => {
+    if (products && products.length > 0) {
+      hasSetInitialProducts.current = false;
+    }
+  }, [products]);
+
 
   return (
     <div className="mb-4 lg:mb-6">
@@ -185,6 +225,7 @@ export default function FiltersAndSearch({
             priceRange={priceRange}
             setPriceRange={handleSetPriceRange}
             setSearchQuery={handleSetSearchQuery}
+            onResetFilters={handleResetFilters}
           />
         )}
       </div>

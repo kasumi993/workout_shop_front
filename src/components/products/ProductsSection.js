@@ -4,17 +4,14 @@ import ProductsList from './ProductsList';
 import FiltersAndSearch from '@/components/filters/FiltersAndSearch';
 import ProductsService from '@/services/productsService';
 
-export default function Products() {
+export default function ProductsSection() {
   const title = useRef(null);
   const filtersBar = useRef(null);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
-  const [searchQuery, setSearchQuery] = useState('');
-
-
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
+  const [resetFilters, setResetFilters] = useState(null);
 
   // Fetch products
   useEffect(() => {
@@ -36,6 +33,13 @@ export default function Products() {
     }
   };
 
+  // Handle filtered products change with additional info
+  const handleSetFilteredProducts = (filtered, hasFilters, resetFunction) => {
+    setFilteredProducts(filtered);
+    setHasActiveFilters(hasFilters);
+    setResetFilters(() => resetFunction);
+  };
+
   return (
     <section id="products" className="py-16 bg-white">
       <div className="container mx-auto">
@@ -43,7 +47,7 @@ export default function Products() {
           <div ref={title} className="text-center mb-15 mt-5 px-8">
             <h2 className="text-5xl font-bold text-gray-800 mb-2">Nos Produits Exclusifs</h2>
             <p className="mt-5 font-light text-xl text-gray-600 mx-auto">
-              Plus d’excuses, le sport s’invite chez vous. Commandez dès maintenant.
+              Plus d&apos;excuses, le sport s&apos;invite chez vous. Commandez dès maintenant.
             </p>
           </div>
         </SlideOnScroll>
@@ -53,18 +57,18 @@ export default function Products() {
           <div ref={filtersBar} className="mb-12 lg:mb-25">
             <FiltersAndSearch 
               products={products}
-              setFilteredProducts={setFilteredProducts}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              priceRange={priceRange}
-              setPriceRange={setPriceRange}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery} 
+              setFilteredProducts={handleSetFilteredProducts}
              />
           </div>
         </SlideOnScroll>
         <div>
-          <ProductsList products={filteredProducts} />
+          <ProductsList 
+            products={filteredProducts} 
+            allProducts={products}
+            isLoading={loading}
+            hasActiveFilters={hasActiveFilters}
+            onResetFilters={resetFilters}
+          />
         </div>
       </div>
     </section>

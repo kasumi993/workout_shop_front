@@ -41,7 +41,8 @@ export default function OrderSummary({ subtotal, deliveryFee, total, finalTotal,
         )}
         <div className="flex justify-between text-gray-600 text-sm sm:text-base">
           <span>Livraison</span>
-          <span>{deliveryFee === 0 ? 'Gratuite' : `${deliveryFee.toLocaleString('fr-FR')} FCFA`}</span>
+          {/* <span>{deliveryFee === 0 ? 'Gratuite' : `${deliveryFee.toLocaleString('fr-FR')} FCFA`}</span> */}
+          <span>Variable</span>
         </div>
         {deliveryFee > 0 && (
           <p className="text-xs text-gray-500">

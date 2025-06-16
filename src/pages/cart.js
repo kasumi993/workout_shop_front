@@ -43,8 +43,7 @@ export default function CartPage() {
                     ).join('\n') + `\n\n` +
                     `Résumé de la commande :\n` +
                     `Sous-total : ${subtotal.toLocaleString('fr-FR')} FCFA\n` +
-                    `Livraison : ${deliveryFee === 0 ? 'Gratuite' : `${deliveryFee.toLocaleString('fr-FR')} FCFA`}\n` +
-                    `Total : ${total.toLocaleString('fr-FR')} FCFA\n\n` +
+                    `Total avant livraison : ${total.toLocaleString('fr-FR')} FCFA\n\n` +
                     `Merci !`;
     
     const whatsappUrl = `https://wa.me/221761978060?text=${encodeURIComponent(message)}`;

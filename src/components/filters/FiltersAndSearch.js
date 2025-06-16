@@ -1,186 +1,142 @@
-import { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useRouter } from 'next/router';
 import Button from "../globalComponents/Button";
 import SearchBar from "./SearchBar";
 import FiltersMenu from "./FiltersMenu";
 import SortBtn from "./SortBtn";
 import { HiOutlineFunnel } from "react-icons/hi2";
+import { useDebounce } from '@/hooks/useDebounce';
 
-// Constants
-const DEFAULT_PRICE_RANGE = { min: 0, max: 100000 };
-const DEFAULT_CATEGORY = "all";
-const DEFAULT_SORT = "featured";
-
-// Utility functions
-const filterByCategory = (products, category) => {
-  if (category === DEFAULT_CATEGORY) return products;
-  return products.filter((p) =>
-    [p.category, p.categorySlug, p.parentCategorySlug].includes(category)
-  );
-};
-
-const filterBySearch = (products, query) => {
-  if (!query) return products;
-  const lowerQuery = query.toLowerCase();
-  return products.filter((p) =>
-    p.title.toLowerCase().includes(lowerQuery) ||
-    p.description.toLowerCase().includes(lowerQuery)
-  );
-};
-
-const filterByPrice = (products, range) => {
-  return products.filter((p) => p.price >= range.min && p.price <= range.max);
-};
-
-const sortProducts = (products, sortBy) => {
-  const sorted = [...products];
-  switch (sortBy) {
-    case "price-asc":
-      return sorted.sort((a, b) => a.price - b.price);
-    case "price-desc":
-      return sorted.sort((a, b) => b.price - a.price);
-    case "name":
-      return sorted.sort((a, b) => a.title.localeCompare(b.title));
-    default:
-      return sorted;
-  }
+const DEFAULT_PARAMS = {
+  page: 1,
+  limit: 12,
+  search: '',
+  category: 'all',
+  minPrice: 0,
+  maxPrice: 100000,
+  sortBy: 'featured'
 };
 
 export default function FiltersAndSearch({
-  products = [],
-  setFilteredProducts = () => {},
-  searchQuery: externalSearchQuery,
-  setSearchQuery: externalSetSearchQuery,
-  selectedCategory: externalSelectedCategory,
-  setSelectedCategory: externalSetSelectedCategory,
-  priceRange: externalPriceRange,
-  setPriceRange: externalSetPriceRange,
-  sortBy: externalSortBy,
-  setSortBy: externalSetSortBy,
-  hideAllProductsBtn = false
+  onFiltersChange,
+  hideAllProductsBtn = false,
+  initialFilters = {},
+  availableFilters = null
 }) {
-  // Use external state if provided, otherwise use internal state
-  const [internalSearchQuery, setInternalSearchQuery] = useState("");
-  const [internalSelectedCategory, setInternalSelectedCategory] = useState(DEFAULT_CATEGORY);
-  const [internalPriceRange, setInternalPriceRange] = useState(DEFAULT_PRICE_RANGE);
-  const [internalSortBy, setInternalSortBy] = useState(DEFAULT_SORT);
+  const router = useRouter();
+  
+  // Filter states
+  const [searchQuery, setSearchQuery] = useState(initialFilters.search || '');
+  const [selectedCategory, setSelectedCategory] = useState(initialFilters.category || 'all');
+  const [priceRange, setPriceRange] = useState({
+    min: initialFilters.minPrice || 0,
+    max: initialFilters.maxPrice || 100000
+  });
+  const [sortBy, setSortBy] = useState(initialFilters.sortBy || 'featured');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Track if we've set initial products to prevent clearing them
-  const hasSetInitialProducts = useRef(false);
+  // Debounce search query to avoid too many API calls
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  // Determine which state to use
-  const searchQuery = externalSearchQuery ?? internalSearchQuery;
-  const selectedCategory = externalSelectedCategory ?? internalSelectedCategory;
-  const priceRange = externalPriceRange ?? internalPriceRange;
-  const sortBy = externalSortBy ?? internalSortBy;
+  // Calculate active filters count
+  const activeFiltersCount = [
+    selectedCategory !== 'all',
+    priceRange.max < 100000 || priceRange.min > 0,
+    debouncedSearchQuery && debouncedSearchQuery.length > 0
+  ].filter(Boolean).length;
 
-  // Memoized handlers
-  const handleSetSearchQuery = useCallback(
-    (value) => {
-      if (externalSetSearchQuery) {
-        externalSetSearchQuery(value);
-      } else {
-        setInternalSearchQuery(value);
-      }
-    },
-    [externalSetSearchQuery]
-  );
+  const hasActiveFilters = activeFiltersCount > 0;
 
-  const handleSetSelectedCategory = useCallback(
-    (value) => {
-      if (externalSetSelectedCategory) {
-        externalSetSelectedCategory(value);
-      } else {
-        setInternalSelectedCategory(value);
-      }
-    },
-    [externalSetSelectedCategory]
-  );
+  // Build filter parameters
+  const buildFilterParams = useCallback(() => {
+    const params = {
+      page: 1, // Reset to first page when filters change
+      limit: 12,
+      sortBy
+    };
 
-  const handleSetPriceRange = useCallback(
-    (value) => {
-      if (externalSetPriceRange) {
-        externalSetPriceRange(value);
-      } else {
-        setInternalPriceRange(value);
-      }
-    },
-    [externalSetPriceRange]
-  );
+    if (debouncedSearchQuery) {
+      params.search = debouncedSearchQuery;
+    }
 
-  const handleSetSortBy = useCallback(
-    (value) => {
-      if (externalSetSortBy) {
-        externalSetSortBy(value);
-      } else {
-        setInternalSortBy(value);
-      }
-    },
-    [externalSetSortBy]
-  );
+    if (selectedCategory && selectedCategory !== 'all') {
+      params.category = selectedCategory;
+    }
+
+    if (priceRange.min > 0) {
+      params.minPrice = priceRange.min;
+    }
+
+    if (priceRange.max < 100000) {
+      params.maxPrice = priceRange.max;
+    }
+
+    return params;
+  }, [debouncedSearchQuery, selectedCategory, priceRange, sortBy]);
+
+  // Handle filter changes
+  useEffect(() => {
+    const params = buildFilterParams();
+    onFiltersChange?.(params, hasActiveFilters);
+    
+    // Update URL parameters (optional, for SEO and bookmarking)
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location);
+      
+      // Clear existing params
+      ['search', 'category', 'minPrice', 'maxPrice', 'sortBy', 'page'].forEach(key => {
+        url.searchParams.delete(key);
+      });
+      
+      // Add new params
+      Object.entries(params).forEach(([key, value]) => {
+        if (value && value !== DEFAULT_PARAMS[key]) {
+          url.searchParams.set(key, value.toString());
+        }
+      });
+      
+      // Update URL without page reload
+      window.history.replaceState({}, '', url.pathname + url.search);
+    }
+  }, [buildFilterParams, hasActiveFilters, onFiltersChange]);
+
+  // Initialize from URL parameters
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      const search = urlParams.get('search') || '';
+      const category = urlParams.get('category') || 'all';
+      const minPrice = parseInt(urlParams.get('minPrice')) || 0;
+      const maxPrice = parseInt(urlParams.get('maxPrice')) || 100000;
+      const sortByParam = urlParams.get('sortBy') || 'featured';
+      
+      setSearchQuery(search);
+      setSelectedCategory(category);
+      setPriceRange({ min: minPrice, max: maxPrice });
+      setSortBy(sortByParam);
+    }
+  }, []);
+
+  const handleResetFilters = useCallback(() => {
+    setSelectedCategory('all');
+    setPriceRange({ min: 0, max: 100000 });
+    setSearchQuery('');
+    setSortBy('featured');
+    
+    // Clear URL parameters
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location);
+      ['search', 'category', 'minPrice', 'maxPrice', 'sortBy', 'page'].forEach(key => {
+        url.searchParams.delete(key);
+      });
+      window.history.replaceState({}, '', url.pathname);
+    }
+  }, []);
 
   const toggleFilters = useCallback(() => {
     setShowFilters(prev => !prev);
   }, []);
-
-  // Memoized filtered products
-  const filteredProducts = useMemo(() => {
-    // Don't filter if products is empty
-    if (!products || products.length === 0) {
-      return [];
-    }
-
-    let filtered = filterByCategory(products, selectedCategory);
-    filtered = filterBySearch(filtered, searchQuery);
-    filtered = filterByPrice(filtered, priceRange);
-    return sortProducts(filtered, sortBy);
-  }, [products, selectedCategory, searchQuery, priceRange, sortBy]);
-
-    // Memoized active filters count
-  const activeFiltersCount = useMemo(() => {
-    const filters = [
-      selectedCategory !== DEFAULT_CATEGORY,
-      priceRange.max < DEFAULT_PRICE_RANGE.max || priceRange.min > DEFAULT_PRICE_RANGE.min,
-      searchQuery && searchQuery.length > 0
-    ];
-    return filters.filter(Boolean).length;
-  }, [selectedCategory, priceRange, searchQuery]);
-
-  // Check if there are active filters
-  const hasActiveFilters = activeFiltersCount > 0;
-
-    // Reset all filters function
-  const handleResetFilters = useCallback(() => {
-    handleSetSelectedCategory(DEFAULT_CATEGORY);
-    handleSetPriceRange(DEFAULT_PRICE_RANGE);
-    handleSetSearchQuery('');
-    handleSetSortBy(DEFAULT_SORT);
-  }, [handleSetSelectedCategory, handleSetPriceRange, handleSetSearchQuery, handleSetSortBy]);
-
-  // Update parent component when filtered products change
-  useEffect(() => {
-    if (products && products.length > 0) {
-      if (!hasSetInitialProducts.current && filteredProducts.length > 0) {
-        // First time setting products
-        hasSetInitialProducts.current = true;
-        setFilteredProducts(filteredProducts, hasActiveFilters, handleResetFilters);
-      } else if (hasSetInitialProducts.current) {
-        // Subsequent updates after initial load
-        setFilteredProducts(filteredProducts, hasActiveFilters, handleResetFilters);
-      }
-    } else if (products && products.length === 0) {
-      // Handle empty products case
-      setFilteredProducts([], hasActiveFilters, handleResetFilters);
-    }
-  }, [filteredProducts, products, hasActiveFilters, handleResetFilters]);
-
-  // Reset the flag when products change (new data loaded)
-  useEffect(() => {
-    if (products && products.length > 0) {
-      hasSetInitialProducts.current = false;
-    }
-  }, [products]);
-
 
   return (
     <div className="mb-4 lg:mb-6">
@@ -192,13 +148,13 @@ export default function FiltersAndSearch({
 
           <SearchBar 
             searchQuery={searchQuery} 
-            setSearchQuery={handleSetSearchQuery} 
+            setSearchQuery={setSearchQuery} 
           />
 
           <div className="flex gap-2 sm:gap-4">
             <SortBtn 
               sortBy={sortBy} 
-              setSortBy={handleSetSortBy} 
+              setSortBy={setSortBy} 
               className="flex-1 sm:flex-initial" 
             />
 
@@ -221,11 +177,11 @@ export default function FiltersAndSearch({
         {showFilters && (
           <FiltersMenu
             selectedCategory={selectedCategory}
-            setSelectedCategory={handleSetSelectedCategory}
+            setSelectedCategory={setSelectedCategory}
             priceRange={priceRange}
-            setPriceRange={handleSetPriceRange}
-            setSearchQuery={handleSetSearchQuery}
+            setPriceRange={setPriceRange}
             onResetFilters={handleResetFilters}
+            availableFilters={availableFilters}
           />
         )}
       </div>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from "react";
 import AddToCartBtn from "../buttons/AddToCartBtn";
 import { useWishlist } from '@/context/WishlistContext';
+import LazyImage from "../performance/LazyImage";
 
 export default function ProductCard({ product }) {
     const { toggleWishlist, isInWishlist, isLoading: wishlistLoading } = useWishlist();
@@ -37,7 +38,7 @@ export default function ProductCard({ product }) {
             onMouseLeave={() => setIsHovered(false)}
         >
             <div className="relative overflow-hidden">
-                <Img
+                <LazyImage
                     src={product.images?.[0]}
                     alt={product.title}
                     className="w-full h-50 object-contain"

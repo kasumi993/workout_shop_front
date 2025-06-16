@@ -4,19 +4,18 @@ import { useToast } from '@/context/ToastContext';
 
 export function useProducts(initialParams = {}) {
     const [products, setProducts] = useState([]);
-    const [allProducts, setAllProducts] = useState([]); // For infinite scroll
-    const [pagination, setPagination] = useState(null);
+    const [pagination, setPagination] = useState({ page: 1, limit: 12, total: 0, hasNext: false });
     const [filters, setFilters] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(false);
     
     const { showError } = useToast();
     const currentParams = useRef(initialParams);
-    const isFirstLoad = useRef(true);
+    const isMounted = useRef(true);
 
     const fetchProducts = useCallback(async (params = {}, append = false) => {
-        // Don't fetch if already loading
+        // Prevent multiple simultaneous requests
         if (loading) return;
 
         try {
@@ -25,90 +24,95 @@ export function useProducts(initialParams = {}) {
             
             const response = await productsService.getProducts(params);
             
+            // Check if component is still mounted
+            if (!isMounted.current) return;
+            
+            const newProducts = response.products || response;
+            const paginationData = response.pagination || {
+                page: params.page || 1,
+                limit: params.limit || 12,
+                total: newProducts.length,
+                hasNext: false
+            };
+            
             if (append) {
-                // For infinite scroll
-                setAllProducts(prev => [...prev, ...response.products]);
-                setProducts(prev => [...prev, ...response.products]);
+                // For infinite scroll - append products
+                setProducts(prev => [...prev, ...newProducts]);
             } else {
-                // For regular pagination or new search
-                setProducts(response.products);
-                setAllProducts(response.products);
+                // For new search/filters - replace products
+                setProducts(newProducts);
             }
             
-            setPagination(response.pagination);
-            setHasMore(response.pagination.hasNext);
+            setPagination(paginationData);
+            setHasMore(paginationData.hasNext);
             
-            // Set filters only on first load or when they exist
-            if (response.filters || isFirstLoad.current) {
+            // Set filters if available
+            if (response.filters) {
                 setFilters(response.filters);
-                isFirstLoad.current = false;
             }
             
         } catch (err) {
+            if (!isMounted.current) return;
+            
             console.error('Error fetching products:', err);
             setError(err);
             showError('Erreur lors du chargement des produits');
+            setHasMore(false);
         } finally {
-            setLoading(false);
+            if (isMounted.current) {
+                setLoading(false);
+            }
         }
     }, [loading, showError]);
 
     const loadMore = useCallback(() => {
-        if (!pagination || !hasMore || loading) return;
+        // Prevent loading if already loading, no more items, or no current products
+        if (loading || !hasMore || products.length === 0) return;
         
         const nextParams = {
             ...currentParams.current,
             page: pagination.page + 1
         };
         
+        currentParams.current = nextParams;
         fetchProducts(nextParams, true);
-    }, [pagination, hasMore, loading, fetchProducts]);
-
-    const loadMoreInfinite = useCallback(() => {
-        if (!hasMore || loading || products.length === 0) return;
-        
-        const lastProduct = products[products.length - 1];
-        const nextParams = {
-            ...currentParams.current,
-            cursor: true,
-            lastId: lastProduct.id
-        };
-        
-        fetchProducts(nextParams, true);
-    }, [hasMore, loading, products, fetchProducts]);
+    }, [pagination.page, hasMore, loading, products.length, fetchProducts]);
 
     const refetch = useCallback((newParams = {}) => {
-        const params = { ...currentParams.current, ...newParams, page: 1 };
+        // Reset pagination when refetching with new params
+        const params = { ...initialParams, ...newParams, page: 1 };
         currentParams.current = params;
-        setAllProducts([]);
+        setProducts([]); // Clear products before new fetch
         fetchProducts(params, false);
-    }, [fetchProducts]);
+    }, [initialParams, fetchProducts]);
 
     const reset = useCallback(() => {
         setProducts([]);
-        setAllProducts([]);
-        setPagination(null);
+        setPagination({ page: 1, limit: 12, total: 0, hasNext: false });
         setError(null);
-        setHasMore(true);
+        setHasMore(false);
+        setLoading(false);
         currentParams.current = initialParams;
     }, [initialParams]);
 
     // Initial load
     useEffect(() => {
+        isMounted.current = true;
         fetchProducts(initialParams);
-    }, []);
+        
+        return () => {
+            isMounted.current = false;
+        };
+    }, []); // Only run once on mount
 
     return {
         products,
-        allProducts,
         pagination,
         filters,
         loading,
         error,
         hasMore,
-        fetchProducts,
         loadMore,
-        loadMoreInfinite,
         refetch,
         reset
     };

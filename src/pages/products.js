@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import MainLayout from '@/layouts/MainLayout';
 import SEOHead from '@/components/seo/SEOHead';
@@ -11,25 +11,31 @@ import { generateBreadcrumbs } from '@/utils/seo';
 
 export default function ProductsPage() {
   const router = useRouter();
-  const [filterParams, setFilterParams] = useState({});
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
   
   // Get initial params from URL
-  const getInitialParams = useCallback(() => {
+  const getInitialParams = () => {
+    const params = {
+      page: 1,
+      limit: 12,
+      sortBy: 'featured'
+    };
+    
+    // Only parse URL params on client side
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
-      return {
-        page: parseInt(urlParams.get('page')) || 1,
-        limit: 12,
-        search: urlParams.get('search') || '',
-        category: urlParams.get('category') || 'all',
-        minPrice: parseInt(urlParams.get('minPrice')) || undefined,
-        maxPrice: parseInt(urlParams.get('maxPrice')) || undefined,
-        sortBy: urlParams.get('sortBy') || 'featured'
-      };
+      
+      if (urlParams.get('search')) params.search = urlParams.get('search');
+      if (urlParams.get('category') && urlParams.get('category') !== 'all') {
+        params.category = urlParams.get('category');
+      }
+      if (urlParams.get('minPrice')) params.minPrice = parseInt(urlParams.get('minPrice'));
+      if (urlParams.get('maxPrice')) params.maxPrice = parseInt(urlParams.get('maxPrice'));
+      if (urlParams.get('sortBy')) params.sortBy = urlParams.get('sortBy');
     }
-    return { page: 1, limit: 12 };
-  }, []);
+    
+    return params;
+  };
 
   const {
     products,
@@ -44,59 +50,63 @@ export default function ProductsPage() {
 
   // Handle filter changes from FiltersAndSearch component
   const handleFiltersChange = useCallback((newParams, hasFilters) => {
-    setFilterParams(newParams);
     setHasActiveFilters(hasFilters);
+    
+    // Update URL without page reload
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location);
+      
+      // Clear all params first
+      url.search = '';
+      
+      // Add only non-default params
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (key === 'page' || key === 'limit') return; // Skip pagination params
+        
+        // Skip default values
+        if (key === 'sortBy' && value === 'featured') return;
+        if (key === 'category' && value === 'all') return;
+        if ((key === 'minPrice' && value === 0) || (key === 'maxPrice' && value === 100000)) return;
+        if (!value) return;
+        
+        url.searchParams.set(key, value.toString());
+      });
+      
+      window.history.replaceState({}, '', url.pathname + url.search);
+    }
+    
+    // Refetch products with new filters
     refetch(newParams);
   }, [refetch]);
 
   // Handle reset filters
   const handleResetFilters = useCallback(() => {
-    const defaultParams = { page: 1, limit: 12 };
-    setFilterParams(defaultParams);
     setHasActiveFilters(false);
-    refetch(defaultParams);
+    
+    // Clear URL params
+    if (typeof window !== 'undefined') {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    
+    // Reset to default params
+    refetch({ page: 1, limit: 12, sortBy: 'featured' });
   }, [refetch]);
 
   // Generate SEO data
-  const selectedCategory = filters?.categories?.find(cat => 
-    cat.id === filterParams.category || cat.name.toLowerCase() === filterParams.category
-  );
+  const selectedCategory = filters?.categories?.find(cat => {
+    const currentCategory = getInitialParams().category;
+    return cat.id === currentCategory || cat.slug === currentCategory;
+  });
   
   const breadcrumbs = generateBreadcrumbs(router, null, selectedCategory);
   
   const seoTitle = selectedCategory 
-    ? `${selectedCategory.name} - ${products.length} produits | Workout Shop`
-    : `Équipements de Sport & Fitness - ${products.length} produits | Workout Shop`;
+    ? `${selectedCategory.name} - ${pagination.total || products.length} produits | Workout Shop`
+    : `Équipements de Sport & Fitness - ${pagination.total || products.length} produits | Workout Shop`;
     
   const seoDescription = selectedCategory
-    ? `Découvrez notre sélection de ${selectedCategory.name.toLowerCase()} (${products.length} produits). Équipements de sport de qualité avec livraison rapide au Sénégal.`
-    : `Découvrez notre large gamme d'équipements de sport et fitness (${products.length} produits). Musculation, cardio, yoga et plus encore. Livraison rapide à Dakar.`;
-
-  // Structured data for products listing
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": seoTitle,
-    "description": seoDescription,
-    "url": `${process.env.NEXT_PUBLIC_SITE_URL}/products`,
-    "mainEntity": {
-      "@type": "ItemList",
-      "numberOfItems": products.length,
-      "itemListElement": products.slice(0, 10).map((product, index) => ({
-        "@type": "Product",
-        "position": index + 1,
-        "name": product.title,
-        "description": product.description,
-        "image": product.images?.[0],
-        "offers": {
-          "@type": "Offer",
-          "price": product.price,
-          "priceCurrency": "XOF",
-          "availability": "https://schema.org/InStock"
-        }
-      }))
-    }
-  };
+    ? `Découvrez notre sélection de ${selectedCategory.name.toLowerCase()} (${pagination.total || products.length} produits). Équipements de sport de qualité avec livraison rapide au Sénégal.`
+    : `Découvrez notre large gamme d'équipements de sport et fitness (${pagination.total || products.length} produits). Musculation, cardio, yoga et plus encore. Livraison rapide à Dakar.`;
 
   return (
     <PageTransition>
@@ -104,7 +114,6 @@ export default function ProductsPage() {
         <SEOHead
           title={seoTitle}
           description={seoDescription}
-          structuredData={structuredData}
           breadcrumbs={breadcrumbs}
         />
 
@@ -114,37 +123,37 @@ export default function ProductsPage() {
             <div className="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
               <AnimatedElement animation="slideUp">
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2 sm:mb-3">
-                    {selectedCategory ? selectedCategory.name : 'Nos Produits'}
-                  </h1>
-                  <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-                    {selectedCategory 
-                      ? `Découvrez notre sélection de ${selectedCategory.name.toLowerCase()}`
-                      : 'Découvrez notre large gamme d\'équipements de sport et fitness de qualité'
-                    }
-                  </p>
-                  
-                  {/* Breadcrumbs */}
-                  {breadcrumbs.length > 1 && (
-                    <nav className="mt-4 sm:mt-6" aria-label="Breadcrumb">
-                      <ol className="flex space-x-2 text-sm text-gray-500">
-                        {breadcrumbs.map((crumb, index) => (
-                          <li key={crumb.href} className="flex items-center">
-                            {index > 0 && <span className="mr-2">/</span>}
-                            {index === breadcrumbs.length - 1 ? (
-                              <span className="text-gray-900 font-medium">{crumb.name}</span>
-                            ) : (
-                              <a 
-                                href={crumb.href}
-                                className="hover:text-gray-700 transition-colors"
-                              >
-                                {crumb.name}
-                              </a>
-                            )}
-                          </li>
-                        ))}
-                      </ol>
-                    </nav>
-                  )}
+                  {selectedCategory ? selectedCategory.name : 'Nos Produits'}
+                </h1>
+                <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
+                  {selectedCategory 
+                    ? `Découvrez notre sélection de ${selectedCategory.name.toLowerCase()}`
+                    : 'Découvrez notre large gamme d\'équipements de sport et fitness de qualité'
+                  }
+                </p>
+                
+                {/* Breadcrumbs */}
+                {breadcrumbs.length > 1 && (
+                  <nav className="mt-4 sm:mt-6" aria-label="Breadcrumb">
+                    <ol className="flex space-x-2 text-sm text-gray-500">
+                      {breadcrumbs.map((crumb, index) => (
+                        <li key={crumb.href} className="flex items-center">
+                          {index > 0 && <span className="mr-2">/</span>}
+                          {index === breadcrumbs.length - 1 ? (
+                            <span className="text-gray-900 font-medium">{crumb.name}</span>
+                          ) : (
+                            <a 
+                              href={crumb.href}
+                              className="hover:text-gray-700 transition-colors"
+                            >
+                              {crumb.name}
+                            </a>
+                          )}
+                        </li>
+                      ))}
+                    </ol>
+                  </nav>
+                )}
               </AnimatedElement>
             </div>
           </div>
@@ -156,7 +165,6 @@ export default function ProductsPage() {
                 hideAllProductsBtn={true}
                 onFiltersChange={handleFiltersChange}
                 initialFilters={getInitialParams()}
-                availableFilters={filters}
               />
             </AnimatedElement>
 
@@ -171,7 +179,6 @@ export default function ProductsPage() {
                 onResetFilters={handleResetFilters}
                 error={error}
                 totalCount={pagination?.total}
-                useVirtualization={products.length > 20}
               />
             </AnimatedElement>
           </div>

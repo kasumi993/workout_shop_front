@@ -10,8 +10,6 @@ import api from '@/lib/api';
  * @param {number} params.minPrice - Minimum price
  * @param {number} params.maxPrice - Maximum price
  * @param {string} params.sortBy - Sort option
- * @param {boolean} params.cursor - Use cursor-based pagination
- * @param {string} params.lastId - Last item ID for cursor pagination
  */
 export const getProducts = async (params = {}) => {
     try {
@@ -25,7 +23,32 @@ export const getProducts = async (params = {}) => {
         });
 
         const response = await api.get(`/products?${searchParams.toString()}`);
-        return response.data;
+        
+        // Ensure consistent response format
+        if (Array.isArray(response.data)) {
+            // If backend returns array directly, wrap it
+            return {
+                products: response.data,
+                pagination: {
+                    page: params.page || 1,
+                    limit: params.limit || 12,
+                    total: response.data.length,
+                    hasNext: false
+                }
+            };
+        }
+        
+        // If backend returns paginated response
+        return {
+            products: response.data.products || response.data.data || [],
+            pagination: response.data.pagination || response.data.meta || {
+                page: params.page || 1,
+                limit: params.limit || 12,
+                total: response.data.total || 0,
+                hasNext: response.data.hasNext || false
+            },
+            filters: response.data.filters
+        };
     } catch (error) {
         console.error('Error fetching products:', error);
         throw error;
@@ -53,10 +76,27 @@ export const getProductById = async (id) => {
  */
 export const getRelatedProducts = async (productId, limit = 4) => {
     try {
+        // First try the related endpoint
         const response = await api.get(`/products/${productId}/related?limit=${limit}`);
         return response.data;
     } catch (error) {
-        console.error(`Error fetching related products for ${productId}:`, error);
-        throw error;
+        // Fallback: fetch products from same category
+        try {
+            const product = await getProductById(productId);
+            if (product.categoryId) {
+                const response = await getProducts({ 
+                    category: product.categoryId, 
+                    limit: limit + 1 // Get one extra to exclude current product
+                });
+                const products = response.products || [];
+                // Filter out current product and limit results
+                return products
+                    .filter(p => p.id !== productId)
+                    .slice(0, limit);
+            }
+        } catch (fallbackError) {
+            console.error(`Error fetching related products for ${productId}:`, fallbackError);
+        }
+        return [];
     }
 };

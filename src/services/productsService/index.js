@@ -1,8 +1,9 @@
-import { getProducts, getProductById } from './get';
+import { getProducts, getProductById, getRelatedProducts } from './get';
 
 const services = {
     getProducts,
-    getProductById
+    getProductById,
+    getRelatedProducts
 }
 
 export default services;

@@ -7,21 +7,10 @@ import SortBtn from "./SortBtn";
 import { HiOutlineFunnel } from "react-icons/hi2";
 import { useDebounce } from '@/hooks/useDebounce';
 
-const DEFAULT_PARAMS = {
-  page: 1,
-  limit: 12,
-  search: '',
-  category: 'all',
-  minPrice: 0,
-  maxPrice: 100000,
-  sortBy: 'featured'
-};
-
 export default function FiltersAndSearch({
   onFiltersChange,
   hideAllProductsBtn = false,
-  initialFilters = {},
-  availableFilters = null
+  initialFilters = {}
 }) {
   const router = useRouter();
   
@@ -35,7 +24,7 @@ export default function FiltersAndSearch({
   const [sortBy, setSortBy] = useState(initialFilters.sortBy || 'featured');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Debounce search query to avoid too many API calls
+  // Debounce search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   // Calculate active filters count
@@ -44,8 +33,6 @@ export default function FiltersAndSearch({
     priceRange.max < 100000 || priceRange.min > 0,
     debouncedSearchQuery && debouncedSearchQuery.length > 0
   ].filter(Boolean).length;
-
-  const hasActiveFilters = activeFiltersCount > 0;
 
   // Build filter parameters
   const buildFilterParams = useCallback(() => {
@@ -77,61 +64,14 @@ export default function FiltersAndSearch({
   // Handle filter changes
   useEffect(() => {
     const params = buildFilterParams();
-    onFiltersChange?.(params, hasActiveFilters);
-    
-    // Update URL parameters (optional, for SEO and bookmarking)
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location);
-      
-      // Clear existing params
-      ['search', 'category', 'minPrice', 'maxPrice', 'sortBy', 'page'].forEach(key => {
-        url.searchParams.delete(key);
-      });
-      
-      // Add new params
-      Object.entries(params).forEach(([key, value]) => {
-        if (value && value !== DEFAULT_PARAMS[key]) {
-          url.searchParams.set(key, value.toString());
-        }
-      });
-      
-      // Update URL without page reload
-      window.history.replaceState({}, '', url.pathname + url.search);
-    }
-  }, [buildFilterParams, hasActiveFilters, onFiltersChange]);
-
-  // Initialize from URL parameters
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      
-      const search = urlParams.get('search') || '';
-      const category = urlParams.get('category') || 'all';
-      const minPrice = parseInt(urlParams.get('minPrice')) || 0;
-      const maxPrice = parseInt(urlParams.get('maxPrice')) || 100000;
-      const sortByParam = urlParams.get('sortBy') || 'featured';
-      
-      setSearchQuery(search);
-      setSelectedCategory(category);
-      setPriceRange({ min: minPrice, max: maxPrice });
-      setSortBy(sortByParam);
-    }
-  }, []);
+    onFiltersChange?.(params, activeFiltersCount > 0);
+  }, [debouncedSearchQuery, selectedCategory, priceRange, sortBy]);
 
   const handleResetFilters = useCallback(() => {
     setSelectedCategory('all');
     setPriceRange({ min: 0, max: 100000 });
     setSearchQuery('');
     setSortBy('featured');
-    
-    // Clear URL parameters
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location);
-      ['search', 'category', 'minPrice', 'maxPrice', 'sortBy', 'page'].forEach(key => {
-        url.searchParams.delete(key);
-      });
-      window.history.replaceState({}, '', url.pathname);
-    }
   }, []);
 
   const toggleFilters = useCallback(() => {
@@ -142,9 +82,14 @@ export default function FiltersAndSearch({
     <div className="mb-4 lg:mb-6">
       <div className="w-full bg-white rounded-lg shadow-sm p-3 sm:p-4">
         <div className="flex flex-col space-y-3 sm:space-y-4 md:space-y-0 md:flex-row md:gap-4 justify-center">
-          <Button className={`hidden md:flex px-3 sm:px-5 py-2 sm:py-4 rounded-lg bg-black text-white cursor-pointer text-sm sm:text-base whitespace-nowrap ${hideAllProductsBtn ? 'md:hidden' : ''}`}>
-            Tous les produits
-          </Button>
+          {!hideAllProductsBtn && (
+            <Button 
+              onClick={() => router.push('/products')}
+              className="hidden md:flex px-3 sm:px-5 py-2 sm:py-4 rounded-lg bg-black text-white cursor-pointer text-sm sm:text-base whitespace-nowrap"
+            >
+              Tous les produits
+            </Button>
+          )}
 
           <SearchBar 
             searchQuery={searchQuery} 
@@ -181,7 +126,6 @@ export default function FiltersAndSearch({
             priceRange={priceRange}
             setPriceRange={setPriceRange}
             onResetFilters={handleResetFilters}
-            availableFilters={availableFilters}
           />
         )}
       </div>

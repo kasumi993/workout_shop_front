@@ -12,7 +12,7 @@ export default function BuyNowBtn({ productId, quantity = 1, selectedProperties 
         
         try {
             await addProduct(productId, quantity, selectedProperties);
-            router.push('/checkout');
+            router.push('/cart');
         } catch (error) {
             console.error('Failed to add product and redirect to checkout:', error);
         }

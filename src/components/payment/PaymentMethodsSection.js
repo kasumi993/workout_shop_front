@@ -106,7 +106,7 @@ export default function PaymentMethods() {
                   </div>
                   <div className="flex items-center justify-center md:justify-start text-sm sm:text-base text-gray-700">
                     <span className="text-green-500 mr-2 text-lg">✓</span>
-                    Livraison gratuite dès 50.000 FCFA
+                    Livraison gratuite dès 150.000 FCFA
                   </div>
                   <div className="flex items-center justify-center md:justify-start text-sm sm:text-base text-gray-700">
                     <span className="text-green-500 mr-2 text-lg">✓</span>

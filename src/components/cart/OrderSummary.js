@@ -44,11 +44,9 @@ export default function OrderSummary({ subtotal, deliveryFee, total, finalTotal,
           {/* <span>{deliveryFee === 0 ? 'Gratuite' : `${deliveryFee.toLocaleString('fr-FR')} FCFA`}</span> */}
           <span>Variable</span>
         </div>
-        {deliveryFee > 0 && (
-          <p className="text-xs text-gray-500">
-            Livraison gratuite pour les commandes de plus de 50.000 FCFA
-          </p>
-        )}
+        <p className="text-xs text-gray-500">
+          Livraison gratuite pour les commandes de plus de 150.000 FCFA
+        </p>
         <div className="border-t pt-2 sm:pt-3">
           <div className="flex justify-between text-base sm:text-lg font-bold text-gray-900">
             <span>Total</span>

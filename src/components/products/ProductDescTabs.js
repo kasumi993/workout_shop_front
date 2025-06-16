@@ -111,8 +111,8 @@ export default function ProductTabs({ product, reviews = [] }) {
                   Frais de livraison
                 </h4>
                 <ul className="list-disc list-inside space-y-1 sm:space-y-2">
-                  <li>Gratuit pour les commandes de plus de 50.000 FCFA</li>
-                  <li>2.500 FCFA pour les commandes en dessous de 50.000 FCFA</li>
+                  <li>Gratuit pour les commandes de plus de 150.000 FCFA</li>
+                  <li>Entre 2.000 FCFA et 5.000 FCFA pour les commandes en dessous de 150.000 FCFA</li>
                 </ul>
               </div>
               

@@ -139,7 +139,8 @@ export function CartContextProvider({ children }) {
     const subtotal = cartItems.reduce((sum, item) => 
       sum + (parseFloat(item.price) * item.quantity), 0
     );
-    const deliveryFee = subtotal > 50000 ? 0 : 2500;
+    // const deliveryFee = subtotal > 50000 ? 0 : 2500;
+    const deliveryFee = 0;
     const total = subtotal + deliveryFee;
     
     return {

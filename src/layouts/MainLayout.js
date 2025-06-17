@@ -1,6 +1,7 @@
 import Header from '@/components/header/Header';
 import Footer from '@/components/footer/Footer';
 import WhatsAppFloat from '@/components/globalComponents/WhatsAppFloat';
+import { Analytics } from '@vercel/analytics/next';
 
 const MainLayout = ({ children, headerFixed, isScrolledPastSection }) => {
     const headerClasses = `${headerFixed ? 'fixed' : 'relative'} top-0 w-full z-50 transition-all duration-300 ${
@@ -15,6 +16,8 @@ const MainLayout = ({ children, headerFixed, isScrolledPastSection }) => {
             </div>
             <main className="">
                 {children}
+                {/* Analytics Component */}
+                <Analytics />
             </main>
             <Footer />
             <WhatsAppFloat />

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Input from '@/components/globalComponents/Input';
+import emailjs from '@emailjs/browser';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -24,10 +25,25 @@ export default function ContactForm() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulation d'envoi (remplacer par votre logique d'envoi)
     try {
-      // Vous pouvez intégrer ici votre service d'email (EmailJS, etc.)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Configuration EmailJS
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+      // Préparer les données du template
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+        to_name: 'Équipe Workout Shop',
+        reply_to: formData.email
+      };
+
+      // Envoyer l'email via EmailJS
+      await emailjs.send(serviceId, templateId, templateParams, publicKey);
       
       setSubmitStatus('success');
       setFormData({
@@ -38,6 +54,7 @@ export default function ContactForm() {
         message: ''
       });
     } catch (error) {
+      console.error('Erreur EmailJS:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);

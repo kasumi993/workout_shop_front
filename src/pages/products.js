@@ -95,6 +95,9 @@ export default function ProductsPage() {
   // Generate SEO data
   const selectedCategory = filters?.categories?.find(cat => {
     const currentCategory = getInitialParams().category;
+    if (!currentCategory) {
+    return false;
+  }
     return cat.id === currentCategory || cat.slug === currentCategory;
   });
   

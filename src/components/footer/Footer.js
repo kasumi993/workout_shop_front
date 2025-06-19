@@ -1,4 +1,4 @@
-import { FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaEnvelope, FaFacebookF, FaInstagram } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -60,10 +60,18 @@ export default function Footer() {
                 <FaFacebookF />
               </a>
               <a 
-                href="#" 
+                href="https://www.instagram.com/workout_shop_sn/" 
                 className="text-gray-400 hover:text-white text-lg sm:text-xl transition duration-300"
               >
                 <FaInstagram />
+              </a>
+              <a 
+                href="mailto:service.workoutshop@gmail.com" 
+                target="_blank" 
+                className="text-gray-400 hover:text-white text-lg sm:text-xl transition duration-300"
+                rel="noopener noreferrer"
+              >
+                <FaEnvelope />
               </a>
             </div>
           </div>
